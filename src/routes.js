@@ -50,6 +50,10 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
+//My custom
+const Attendance = React.lazy(() => import('./views/management/attendance/Attendance'))
+const Mark = React.lazy(() => import('./views/management/mark/mark'));
+
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
@@ -95,6 +99,9 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', element: Modals },
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
+  //My custom
+  { path: '/attendance', name: 'Attendance', element: Attendance },
+  { path: '/mark', name: 'Mark', element: Mark },
 ]
 
 export default routes

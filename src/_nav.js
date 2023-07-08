@@ -28,6 +28,35 @@ const _nav = [
   },
   {
     component: CNavTitle,
+    name: 'Quản lý lớp học',
+  },
+  {
+    component: CNavItem,
+    name: 'Điểm danh',
+    to: '/attendance',
+  },
+  {
+    component: CNavItem,
+    name: 'Nhập điểm',
+    to: '/mark',
+  },
+  {
+    component: CNavItem,
+    name: 'Tài liệu',
+    to: '/doc',
+  },
+  {
+    component: CNavItem,
+    name: 'Báo cáo điểm',
+    to: '/mark/report',
+  },
+  {
+    component: CNavItem,
+    name: 'Báo cáo tổng hợp',
+    to: 'report',
+  },
+  {
+    component: CNavTitle,
     name: 'Theme',
   },
   {

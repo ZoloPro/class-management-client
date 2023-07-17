@@ -1,4 +1,5 @@
 import React from 'react'
+import ProtectedRoute from './route/ProtectedRoute'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -52,7 +53,15 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 
 //My custom
 const Attendance = React.lazy(() => import('./views/management/attendance/Attendance'))
-const Mark = React.lazy(() => import('./views/management/mark/mark'));
+const Mark = React.lazy(() => import('./views/management/mark/mark'))
+
+const Lecturer = React.lazy(() => import('./views/management/lecturer/Lecturer'))
+const Student = React.lazy(() => import('./views/management/student/Student'))
+const Term = React.lazy(() => import('./views/management/term/Term'))
+const Classroom = React.lazy(() => import('./views/management/classroom/Classroom'))
+const RegisterClassroom = React.lazy(() =>
+  import('./views/management/registerClassroom/RegisterClassroom'),
+)
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -99,9 +108,59 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', element: Modals },
   { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
   { path: '/widgets', name: 'Widgets', element: Widgets },
-  //My custom
+
+  //My lecturer route
   { path: '/attendance', name: 'Attendance', element: Attendance },
   { path: '/mark', name: 'Mark', element: Mark },
+  { path: '/mark/:classroomId', name: 'Mark', element: Mark },
+
+  //My admin route
+  {
+    path: '/admin/lecturer',
+    name: 'lecturer',
+    element: (
+      <ProtectedRoute role={'admin'}>
+        <Lecturer />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/student',
+    name: 'student',
+    element: (
+      <ProtectedRoute role={'admin'}>
+        <Student />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/term',
+    name: 'term',
+    element: (
+      <ProtectedRoute role={'admin'}>
+        <Term />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/classroom',
+    name: 'classroom',
+    element: (
+      <ProtectedRoute role={'admin'}>
+        <Classroom />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/register-classroom/:classroomId',
+    name: 'register classroom',
+    element: RegisterClassroom,
+    requiredRole: (
+      <ProtectedRoute role={'admin'}>
+        <RegisterClassroom />
+      </ProtectedRoute>
+    ),
+  },
 ]
 
 export default routes

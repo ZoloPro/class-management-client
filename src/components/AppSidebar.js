@@ -13,12 +13,17 @@ import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
 
 // sidebar nav config
-import navigation from '../_nav'
+import adminNav from '../adminNav'
+import lecturerNav from '../lecturerNav'
+
+import { AuthContext } from '../context/AuthContext'
 
 const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
+
+  const { userRole } = React.useContext(AuthContext)
 
   return (
     <CSidebar
@@ -35,7 +40,7 @@ const AppSidebar = () => {
       </CSidebarBrand>
       <CSidebarNav>
         <SimpleBar>
-          <AppSidebarNav items={navigation} />
+          <AppSidebarNav items={userRole == 'admin' ? adminNav : lecturerNav} />
         </SimpleBar>
       </CSidebarNav>
       <CSidebarToggler

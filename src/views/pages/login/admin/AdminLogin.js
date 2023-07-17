@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import CIcon from '@coreui/icons-react'
+import { cilLockLocked, cilUser } from '@coreui/icons'
+import { useNavigate } from 'react-router-dom'
 import {
   CAlert,
   CButton,
@@ -13,37 +15,28 @@ import {
   CInputGroupText,
   CRow,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
-import axiosClient from '../../../axios/axios-client'
-import { useStateContext } from '../../../context/AuthContext'
+import { AuthContext } from '../../../../context/AuthContext'
+import AxiosClient from '../../../../axios/axios-client'
 
-const Login = () => {
+const AdminLogin = () => {
   const [code, setCode] = useState()
   const [password, setPassword] = useState()
-  const [errMsg, setErrMsg] = useState()
-  const { setToken, setUser } = useStateContext()
+  const [error, setError] = useState(null) // Thêm state error để hiển thị thông báo lỗi
+  const { login } = useContext(AuthContext)
+  const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault()
-    axiosClient
-      .post('/lecturer/login', { code, password })
-      .then(({ data }) => {
-        setToken(data.access_token)
-        setUser(data.user)
-        console.log(data)
+    // Thực hiện đăng nhập và nhận lại token
+    AxiosClient.post('/admin/login', { code, password })
+      .then((response) => {
+        const token = response?.data?.data?.access_token
+        const user = response?.data?.data?.user
+        login(token, 'admin', user) // Lưu token và vai trò vào AuthContext
+        navigate('/') // Điều hướng đến trang chủ admin
       })
-      .catch((err) => {
-        console.log(err)
-        if (!err?.response) {
-          setErrMsg('Hệ thống không phản hồi')
-        } else if (err.response?.status === 400) {
-          setErrMsg('Thiếu mã giảng viên hoặc mật khẩu')
-        } else if (err.response?.status === 401) {
-          setErrMsg('Sai mã giảng viên hoặc mật khẩu')
-        } else {
-          setErrMsg('Đăng nhập thất bại')
-        }
+      .catch((error) => {
+        console.log(error) // Xử lý lỗi đăng nhập, hiển thị thông báo lỗi, v.v.
       })
   }
 
@@ -54,19 +47,18 @@ const Login = () => {
           <CCol md={4}>
             <CCard className="p-4">
               <CCardBody>
-                <CForm onSubmit={handleSubmit}>
+                <CForm onSubmit={handleLogin} method="POST">
                   <h1>Đăng nhập</h1>
-                  <CAlert dismissible visible={errMsg ? true : false} color="warning">
-                    {errMsg ? errMsg : ''}
-                  </CAlert>
-                  <p className="text-medium-emphasis">Đăng nhập vào tài khoản giảng viên</p>
+                  <p className="text-medium-emphasis">Đăng nhập vào tài khoản admin</p>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
                     <CFormInput
+                      className="has-validation"
                       placeholder="Mã giảng viên"
                       autoComplete="username"
+                      required
                       onChange={(e) => setCode(e.target.value)}
                     />
                   </CInputGroup>
@@ -78,6 +70,7 @@ const Login = () => {
                       type="password"
                       placeholder="Mật khẩu"
                       autoComplete="current-password"
+                      required
                       onChange={(e) => setPassword(e.target.value)}
                     />
                   </CInputGroup>
@@ -96,4 +89,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default AdminLogin

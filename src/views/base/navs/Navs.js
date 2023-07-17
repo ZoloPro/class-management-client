@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   CRow,
   CCol,
@@ -12,8 +12,8 @@ import {
   CNav,
   CNavItem,
   CNavLink,
-} from '@coreui/react'
-import { DocsExample } from 'src/components'
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
 const Navs = () => {
   return (
@@ -391,7 +391,7 @@ const Navs = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
-}
+  );
+};
 
-export default Navs
+export default Navs;

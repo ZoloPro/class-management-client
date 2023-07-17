@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { cilPencil, cilPlus, cilTrash } from '@coreui/icons'
-import CIcon from '@coreui/icons-react'
-import axiosClient from '../../../axios/axios-client'
-import { toast } from 'react-toastify'
+import React, { useEffect, useRef, useState } from 'react';
+import { cilPencil, cilPlus, cilTrash } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
+import axiosClient from '../../../axios/axios-client';
+import { toast } from 'react-toastify';
 import {
   CTable,
   CTableBody,
@@ -23,82 +23,82 @@ import {
   CForm,
   CFormInput,
   CFormSelect,
-} from '@coreui/react'
+} from '@coreui/react';
 
 const Classroom = () => {
-  const [classrooms, setClassrooms] = useState([])
-  const [lecturers, setLecturers] = useState([])
-  const [terms, setTerms] = useState([])
+  const [classrooms, setClassrooms] = useState([]);
+  const [lecturers, setLecturers] = useState([]);
+  const [terms, setTerms] = useState([]);
 
   useEffect(() => {
-    getClassrooms()
-    getLecturers()
-    getTerms()
-  }, [])
+    getClassrooms();
+    getLecturers();
+    getTerms();
+  }, []);
   const getClassrooms = () => {
     axiosClient
       .get(`/admin/classrooms`)
       .then((response) => {
-        console.log(response)
-        setClassrooms(response?.data?.data?.classrooms)
+        console.log(response);
+        setClassrooms(response?.data?.data?.classrooms);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const getTerms = () => {
     axiosClient
       .get(`/admin/terms`)
       .then((response) => {
-        console.log(response)
-        setTerms(response?.data?.data?.terms)
+        console.log(response);
+        setTerms(response?.data?.data?.terms);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const getLecturers = () => {
     axiosClient
       .get(`/admin/lecturers`)
       .then((response) => {
-        console.log(response)
-        setLecturers(response?.data?.data?.lecturers)
+        console.log(response);
+        setLecturers(response?.data?.data?.lecturers);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
-  const [addFormVisible, setAddFormVisible] = useState(false)
-  const [selectedClassroom, setSelectedClassroom] = useState(null)
+  const [addFormVisible, setAddFormVisible] = useState(false);
+  const [selectedClassroom, setSelectedClassroom] = useState(null);
 
-  const addFrom = useRef()
+  const addFrom = useRef();
 
   const handleSubmitAdd = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const classroom = {
       termId: addFrom.current.term.value,
       lecturerId: addFrom.current.lecturer.value,
-    }
+    };
     axiosClient
       .post('admin/classrooms', classroom)
       .then((response) => {
-        console.log(response)
-        addFrom.current.reset()
-        getClassrooms()
-        setAddFormVisible(false)
-        toast.success('Thêm lớp học thành công')
+        console.log(response);
+        addFrom.current.reset();
+        getClassrooms();
+        setAddFormVisible(false);
+        toast.success('Thêm lớp học thành công');
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
-  const updateFrom = useRef()
+  const updateFrom = useRef();
 
-  const handleSubmitUpdate = () => {}
+  const handleSubmitUpdate = () => {};
 
   const handleDelete = (classroom) => {
     if (
@@ -106,22 +106,22 @@ const Classroom = () => {
         `Xác nhận xóa lớp học ${classroom.term.termName} (${classroom.lecturer.fullname})`,
       )
     ) {
-      return
+      return;
     }
     axiosClient
       .delete(`admin/classrooms/${classroom.id}`, classroom)
       .then((response) => {
-        console.log(response)
-        getClassrooms()
-        toast.success('Xóa lớp học thành công')
+        console.log(response);
+        getClassrooms();
+        toast.success('Xóa lớp học thành công');
       })
       .catch((error) => {
         if (error.response) {
-          toast.error(error.response.data.message)
+          toast.error(error.response.data.message);
         }
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   return (
     <div>
@@ -266,7 +266,7 @@ const Classroom = () => {
         </CModal>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Classroom
+export default Classroom;

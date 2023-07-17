@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import axiosClient from '../../../axios/axios-client'
-import { useParams } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import axiosClient from '../../../axios/axios-client';
+import { useParams } from 'react-router-dom';
 import {
   CTable,
   CTableBody,
@@ -13,43 +13,43 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CDropdown,
-} from '@coreui/react'
+} from '@coreui/react';
 
 const Mark = () => {
-  const [classrooms, setClassrooms] = useState([])
-  const [marks, setMarks] = useState([])
+  const [classrooms, setClassrooms] = useState([]);
+  const [marks, setMarks] = useState([]);
 
   useEffect(() => {
-    getClass()
-  })
+    getClass();
+  });
 
-  const classroomId = useParams().classroomId
+  const classroomId = useParams().classroomId;
 
   const getClass = () => {
     axiosClient
       .get('/lecturer/classrooms')
       .then((response) => {
-        setClassrooms(response.data.classrooms)
+        setClassrooms(response.data.classrooms);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const getMarks = () => {
     axiosClient
       .get(`/lecturer/classrooms/${classroomId}/mark`)
       .then((response) => {
-        console.log(response)
-        setMarks(response?.data.markList)
+        console.log(response);
+        setMarks(response?.data.markList);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   if (classroomId) {
-    getMarks()
+    getMarks();
   }
 
   const handleCellChange = (event, code, field) => {
@@ -58,12 +58,12 @@ const Mark = () => {
         return {
           ...mark,
           [field]: event.target.value,
-        }
+        };
       }
-      return mark
-    })
-    setMarks(newMarks)
-  }
+      return mark;
+    });
+    setMarks(newMarks);
+  };
 
   return (
     <CCard>
@@ -124,7 +124,7 @@ const Mark = () => {
         </CTable>
       </div>
     </CCard>
-  )
-}
+  );
+};
 
-export default Mark
+export default Mark;

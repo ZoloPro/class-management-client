@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import {
   CTable,
   CTableBody,
@@ -11,7 +11,7 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CDropdown,
-} from '@coreui/react'
+} from '@coreui/react';
 
 const Attendance = () => {
   const [data, setData] = useState([
@@ -20,7 +20,7 @@ const Attendance = () => {
     { code: 3, famMidName: 'John', name: 'fdfd', mark: 23 },
     { code: 4, famMidName: 'John', name: 'fdfd', mark: 23 },
     // ...more data
-  ])
+  ]);
 
   const handleCellChange = (event, code, field) => {
     const newData = data.map((item) => {
@@ -28,12 +28,12 @@ const Attendance = () => {
         return {
           ...item,
           [field]: event.target.value,
-        }
+        };
       }
-      return item
-    })
-    setData(newData)
-  }
+      return item;
+    });
+    setData(newData);
+  };
   /*const [students, setStudents] = useState([])
 
   useEffect(() => {
@@ -107,7 +107,7 @@ const Attendance = () => {
         </CTable>
       </div>
     </CCard>
-  )
-}
+  );
+};
 
-export default Attendance
+export default Attendance;

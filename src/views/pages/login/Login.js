@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   CAlert,
   CButton,
@@ -12,40 +12,40 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
-import axiosClient from '../../../axios/axios-client'
-import { useStateContext } from '../../../context/AuthContext'
+} from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { cilLockLocked, cilUser } from '@coreui/icons';
+import axiosClient from '../../../axios/axios-client';
+import { useStateContext } from '../../../context/AuthContext';
 
 const Login = () => {
-  const [code, setCode] = useState()
-  const [password, setPassword] = useState()
-  const [errMsg, setErrMsg] = useState()
-  const { setToken, setUser } = useStateContext()
+  const [code, setCode] = useState();
+  const [password, setPassword] = useState();
+  const [errMsg, setErrMsg] = useState();
+  const { setToken, setUser } = useStateContext();
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     axiosClient
       .post('/lecturer/login', { code, password })
       .then(({ data }) => {
-        setToken(data.access_token)
-        setUser(data.user)
-        console.log(data)
+        setToken(data.access_token);
+        setUser(data.user);
+        console.log(data);
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
         if (!err?.response) {
-          setErrMsg('Hệ thống không phản hồi')
+          setErrMsg('Hệ thống không phản hồi');
         } else if (err.response?.status === 400) {
-          setErrMsg('Thiếu mã giảng viên hoặc mật khẩu')
+          setErrMsg('Thiếu mã giảng viên hoặc mật khẩu');
         } else if (err.response?.status === 401) {
-          setErrMsg('Sai mã giảng viên hoặc mật khẩu')
+          setErrMsg('Sai mã giảng viên hoặc mật khẩu');
         } else {
-          setErrMsg('Đăng nhập thất bại')
+          setErrMsg('Đăng nhập thất bại');
         }
-      })
-  }
+      });
+  };
 
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
@@ -93,7 +93,7 @@ const Login = () => {
         </CRow>
       </CContainer>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

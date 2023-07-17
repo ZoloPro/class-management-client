@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   CButton,
   CCard,
@@ -15,19 +15,19 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react'
-import { DocsExample } from 'src/components'
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
 const CustomStyles = () => {
-  const [validated, setValidated] = useState(false)
+  const [validated, setValidated] = useState(false);
   const handleSubmit = (event) => {
-    const form = event.currentTarget
+    const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault()
-      event.stopPropagation()
+      event.preventDefault();
+      event.stopPropagation();
     }
-    setValidated(true)
-  }
+    setValidated(true);
+  };
   return (
     <CForm
       className="row g-3 needs-validation"
@@ -92,19 +92,19 @@ const CustomStyles = () => {
         </CButton>
       </CCol>
     </CForm>
-  )
-}
+  );
+};
 
 const BrowserDefaults = () => {
-  const [validated, setValidated] = useState(false)
+  const [validated, setValidated] = useState(false);
   const handleSubmit = (event) => {
-    const form = event.currentTarget
+    const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault()
-      event.stopPropagation()
+      event.preventDefault();
+      event.stopPropagation();
     }
-    setValidated(true)
-  }
+    setValidated(true);
+  };
   return (
     <CForm className="row g-3 needs-validation" validated={validated} onSubmit={handleSubmit}>
       <CCol md={4}>
@@ -164,19 +164,19 @@ const BrowserDefaults = () => {
         </CButton>
       </CCol>
     </CForm>
-  )
-}
+  );
+};
 
 const Tooltips = () => {
-  const [validated, setValidated] = useState(false)
+  const [validated, setValidated] = useState(false);
   const handleSubmit = (event) => {
-    const form = event.currentTarget
+    const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault()
-      event.stopPropagation()
+      event.preventDefault();
+      event.stopPropagation();
     }
-    setValidated(true)
-  }
+    setValidated(true);
+  };
   return (
     <CForm
       className="row g-3 needs-validation"
@@ -246,8 +246,8 @@ const Tooltips = () => {
         </CButton>
       </CCol>
     </CForm>
-  )
-}
+  );
+};
 
 const Validation = () => {
   return (
@@ -497,7 +497,7 @@ const Validation = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
-}
+  );
+};
 
-export default Validation
+export default Validation;

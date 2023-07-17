@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
-import { CButton, CCard, CCardBody, CCardHeader, CCol, CCollapse, CRow } from '@coreui/react'
-import { DocsExample } from 'src/components'
+import React, { useState } from 'react';
+import { CButton, CCard, CCardBody, CCardHeader, CCol, CCollapse, CRow } from '@coreui/react';
+import { DocsExample } from 'src/components';
 
 const Collapses = () => {
-  const [visible, setVisible] = useState(false)
-  const [visibleHorizontal, setVisibleHorizontal] = useState(false)
-  const [visibleA, setVisibleA] = useState(false)
-  const [visibleB, setVisibleB] = useState(false)
+  const [visible, setVisible] = useState(false);
+  const [visibleHorizontal, setVisibleHorizontal] = useState(false);
+  const [visibleA, setVisibleA] = useState(false);
+  const [visibleB, setVisibleB] = useState(false);
 
   return (
     <CRow>
@@ -21,8 +21,8 @@ const Collapses = () => {
               <CButton
                 href="#"
                 onClick={(e) => {
-                  e.preventDefault()
-                  setVisible(!visible)
+                  e.preventDefault();
+                  setVisible(!visible);
                 }}
               >
                 Link
@@ -85,8 +85,8 @@ const Collapses = () => {
               <CButton onClick={() => setVisibleB(!visibleB)}>Toggle second element</CButton>
               <CButton
                 onClick={() => {
-                  setVisibleA(!visibleA)
-                  setVisibleB(!visibleB)
+                  setVisibleA(!visibleA);
+                  setVisibleB(!visibleB);
                 }}
               >
                 Toggle both elements
@@ -120,7 +120,7 @@ const Collapses = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
-}
+  );
+};
 
-export default Collapses
+export default Collapses;

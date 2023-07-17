@@ -1,6 +1,6 @@
-import React from 'react'
-import { CCard, CCardHeader, CCardBody } from '@coreui/react'
-import { DocsLink } from 'src/components'
+import React from 'react';
+import { CCard, CCardHeader, CCardBody } from '@coreui/react';
+import { DocsLink } from 'src/components';
 
 const Typography = () => {
   return (
@@ -223,7 +223,7 @@ const Typography = () => {
         </CCardBody>
       </CCard>
     </>
-  )
-}
+  );
+};
 
-export default Typography
+export default Typography;

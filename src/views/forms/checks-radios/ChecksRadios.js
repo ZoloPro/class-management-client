@@ -1,6 +1,6 @@
-import React from 'react'
-import { CCard, CCardBody, CCardHeader, CCol, CFormCheck, CFormSwitch, CRow } from '@coreui/react'
-import { DocsExample } from 'src/components'
+import React from 'react';
+import { CCard, CCardBody, CCardHeader, CCol, CFormCheck, CFormSwitch, CRow } from '@coreui/react';
+import { DocsExample } from 'src/components';
 
 const ChecksRadios = () => {
   return (
@@ -386,7 +386,7 @@ const ChecksRadios = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
-}
+  );
+};
 
-export default ChecksRadios
+export default ChecksRadios;

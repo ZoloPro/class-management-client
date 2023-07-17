@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   CBreadcrumb,
   CBreadcrumbItem,
@@ -8,8 +8,8 @@ import {
   CCol,
   CRow,
   CLink,
-} from '@coreui/react'
-import { DocsExample } from 'src/components'
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
 const Breadcrumbs = () => {
   return (
@@ -68,7 +68,7 @@ const Breadcrumbs = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
-}
+  );
+};
 
-export default Breadcrumbs
+export default Breadcrumbs;

@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   CButton,
   CButtonGroup,
@@ -12,8 +12,8 @@ import {
   CDropdownMenu,
   CDropdownToggle,
   CRow,
-} from '@coreui/react'
-import { DocsExample } from 'src/components'
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
 const Dropdowns = () => {
   return (
@@ -332,7 +332,7 @@ const Dropdowns = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
-}
+  );
+};
 
-export default Dropdowns
+export default Dropdowns;

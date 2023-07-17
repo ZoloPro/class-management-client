@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   CBadge,
   CCard,
@@ -9,8 +9,8 @@ import {
   CListGroup,
   CListGroupItem,
   CRow,
-} from '@coreui/react'
-import { DocsExample } from 'src/components'
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
 const ListGroups = () => {
   return (
@@ -340,7 +340,7 @@ const ListGroups = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
-}
+  );
+};
 
-export default ListGroups
+export default ListGroups;

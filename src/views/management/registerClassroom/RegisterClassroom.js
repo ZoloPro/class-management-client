@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
-import axiosClient from '../../../axios/axios-client'
-import { useParams } from 'react-router-dom'
-import Select from 'react-select'
+import React, { useEffect, useRef, useState } from 'react';
+import axiosClient from '../../../axios/axios-client';
+import { useParams } from 'react-router-dom';
+import Select from 'react-select';
 import {
   CTable,
   CTableBody,
@@ -25,72 +25,72 @@ import {
   CButton,
   CModal,
   CSpinner,
-} from '@coreui/react'
-import { toast } from 'react-toastify'
+} from '@coreui/react';
+import { toast } from 'react-toastify';
 
 const RegisterClassroom = () => {
-  const [classrooms, setClassrooms] = useState([])
-  const [studentList, setStudentList] = useState([]) //Toàn bộ danh sách sinh viên theo mã lớp
-  const [students, setStudents] = useState([]) //Toàn bộ danh sách sinh viên
-  const [addFormVisible, setAddFormVisible] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [classrooms, setClassrooms] = useState([]);
+  const [studentList, setStudentList] = useState([]); //Toàn bộ danh sách sinh viên theo mã lớp
+  const [students, setStudents] = useState([]); //Toàn bộ danh sách sinh viên
+  const [addFormVisible, setAddFormVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const addFrom = useRef()
-  const [selectedStudent, setSelectedStudent] = useState(null)
+  const addFrom = useRef();
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   useEffect(() => {
-    getStudentList() //Lấy toàn bộ danh sách sinh viên theo mã lớp
-    getClassroom()
-    getStudents() //Lấy toàn bộ danh sách sinh viên
-  }, [])
+    getStudentList(); //Lấy toàn bộ danh sách sinh viên theo mã lớp
+    getClassroom();
+    getStudents(); //Lấy toàn bộ danh sách sinh viên
+  }, []);
 
-  const classroomId = useParams().classroomId
+  const classroomId = useParams().classroomId;
 
   const getClassroom = () => {
     axiosClient
       .get('/admin/classrooms')
       .then((response) => {
-        setClassrooms(response?.data?.data?.classrooms)
+        setClassrooms(response?.data?.data?.classrooms);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const getStudents = () => {
     axiosClient
       .get('/admin/students')
       .then((response) => {
-        setStudents(response?.data?.data?.students)
+        setStudents(response?.data?.data?.students);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const getStudentList = () => {
     axiosClient
       .get(`/admin/classrooms/${classroomId}`)
       .then((response) => {
-        console.log(response)
-        setStudentList(response?.data?.data?.classroom.students)
-        setLoading(false)
+        console.log(response);
+        setStudentList(response?.data?.data?.classroom.students);
+        setLoading(false);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const handleSubmitAdd = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (studentList.includes(selectedStudent)) {
-      toast.error('Sinh viên đã có trong danh sách')
-      addFrom.current.reset()
-      setAddFormVisible(false)
-      return
+      toast.error('Sinh viên đã có trong danh sách');
+      addFrom.current.reset();
+      setAddFormVisible(false);
+      return;
     }
-    setStudentList([...studentList, selectedStudent])
-  }
+    setStudentList([...studentList, selectedStudent]);
+  };
 
   return (
     <div>
@@ -192,7 +192,7 @@ const RegisterClassroom = () => {
         </CForm>
       </CModal>
     </div>
-  )
-}
+  );
+};
 
-export default RegisterClassroom
+export default RegisterClassroom;

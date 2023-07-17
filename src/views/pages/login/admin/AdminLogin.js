@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
-import { useNavigate } from 'react-router-dom'
+import React, { useContext, useState } from 'react';
+import CIcon from '@coreui/icons-react';
+import { cilLockLocked, cilUser } from '@coreui/icons';
+import { useNavigate } from 'react-router-dom';
 import {
   CAlert,
   CButton,
@@ -14,31 +14,31 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react'
-import { AuthContext } from '../../../../context/AuthContext'
-import AxiosClient from '../../../../axios/axios-client'
+} from '@coreui/react';
+import { AuthContext } from '../../../../context/AuthContext';
+import AxiosClient from '../../../../axios/axios-client';
 
 const AdminLogin = () => {
-  const [code, setCode] = useState()
-  const [password, setPassword] = useState()
-  const [error, setError] = useState(null) // Thêm state error để hiển thị thông báo lỗi
-  const { login } = useContext(AuthContext)
-  const navigate = useNavigate()
+  const [code, setCode] = useState();
+  const [password, setPassword] = useState();
+  const [error, setError] = useState(null); // Thêm state error để hiển thị thông báo lỗi
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     // Thực hiện đăng nhập và nhận lại token
     AxiosClient.post('/admin/login', { code, password })
       .then((response) => {
-        const token = response?.data?.data?.access_token
-        const user = response?.data?.data?.user
-        login(token, 'admin', user) // Lưu token và vai trò vào AuthContext
-        navigate('/') // Điều hướng đến trang chủ admin
+        const token = response?.data?.data?.access_token;
+        const user = response?.data?.data?.user;
+        login(token, 'admin', user); // Lưu token và vai trò vào AuthContext
+        navigate('/'); // Điều hướng đến trang chủ admin
       })
       .catch((error) => {
-        console.log(error) // Xử lý lỗi đăng nhập, hiển thị thông báo lỗi, v.v.
-      })
-  }
+        console.log(error); // Xử lý lỗi đăng nhập, hiển thị thông báo lỗi, v.v.
+      });
+  };
 
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
@@ -86,7 +86,7 @@ const AdminLogin = () => {
         </CRow>
       </CContainer>
     </div>
-  )
-}
+  );
+};
 
-export default AdminLogin
+export default AdminLogin;

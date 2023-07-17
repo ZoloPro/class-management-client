@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   CButton,
   CCard,
@@ -18,10 +18,10 @@ import {
   CNavLink,
   CCol,
   CRow,
-} from '@coreui/react'
-import { DocsExample } from 'src/components'
+} from '@coreui/react';
+import { DocsExample } from 'src/components';
 
-import ReactImg from 'src/assets/images/react.jpg'
+import ReactImg from 'src/assets/images/react.jpg';
 
 const Cards = () => {
   return (
@@ -900,7 +900,7 @@ const Cards = () => {
         </CCard>
       </CCol>
     </CRow>
-  )
-}
+  );
+};
 
-export default Cards
+export default Cards;

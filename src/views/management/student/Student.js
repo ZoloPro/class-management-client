@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { cilDataTransferUp, cilPencil, cilPlus, cilTrash } from '@coreui/icons'
-import CIcon from '@coreui/icons-react'
-import axiosClient from '../../../axios/axios-client'
-import { toast } from 'react-toastify'
+import React, { useEffect, useRef, useState } from 'react';
+import { cilDataTransferUp, cilPencil, cilPlus, cilTrash } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
+import axiosClient from '../../../axios/axios-client';
+import { toast } from 'react-toastify';
 import {
   CTable,
   CTableBody,
@@ -24,40 +24,40 @@ import {
   CForm,
   CFormInput,
   CSpinner,
-} from '@coreui/react'
+} from '@coreui/react';
 
 const Student = () => {
-  const [students, setStudents] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [addFormVisible, setAddFormVisible] = useState(false)
-  const [importFormVisible, setImportFormVisible] = useState(false)
-  const [selectedStudent, setSelectedStudent] = useState(null)
+  const [addFormVisible, setAddFormVisible] = useState(false);
+  const [importFormVisible, setImportFormVisible] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
-  const updateFrom = useRef()
-  const addFrom = useRef()
-  const importForm = useRef()
+  const updateFrom = useRef();
+  const addFrom = useRef();
+  const importForm = useRef();
 
   useEffect(() => {
-    getStudents()
-  }, [])
+    getStudents();
+  }, []);
 
   const getStudents = () => {
     axiosClient
       .get(`/admin/students`)
       .then((response) => {
-        console.log(response)
-        setStudents(response?.data?.data?.students)
-        setLoading(false)
+        console.log(response);
+        setStudents(response?.data?.data?.students);
+        setLoading(false);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const handleSubmitAdd = (e) => {
-    e.preventDefault()
-    const toastAdd = toast.loading('Đang thêm')
+    e.preventDefault();
+    const toastAdd = toast.loading('Đang thêm');
     const student = {
       famMidName: addFrom.current.famMidName.value.trim(),
       name: addFrom.current.name.value.trim(),
@@ -65,35 +65,35 @@ const Student = () => {
       birthdate: addFrom.current.birthdate.value.trim(),
       phone: addFrom.current.phone.value.trim(),
       email: addFrom.current.email.value.trim(),
-    }
+    };
     axiosClient
       .post('admin/students', student)
       .then((response) => {
-        console.log(response)
-        addFrom.current.reset()
-        getStudents()
-        setAddFormVisible(false)
+        console.log(response);
+        addFrom.current.reset();
+        getStudents();
+        setAddFormVisible(false);
         toast.update(toastAdd, {
           render: 'Thêm thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastAdd, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   const handleSubmitUpdate = (e, studentId) => {
-    e.preventDefault()
-    const toastUpdate = toast.loading('Đang cập nhật')
+    e.preventDefault();
+    const toastUpdate = toast.loading('Đang cập nhật');
     const student = {
       famMidName: updateFrom.current.famMidName.value.trim(),
       name: updateFrom.current.name.value.trim(),
@@ -101,66 +101,66 @@ const Student = () => {
       birthdate: updateFrom.current.birthdate.value.trim(),
       phone: updateFrom.current.phone.value.trim(),
       email: updateFrom.current.email.value.trim(),
-    }
+    };
     axiosClient
       .put(`admin/students/${studentId}`, student)
       .then((response) => {
-        console.log(response)
-        getStudents()
-        setSelectedStudent(null)
+        console.log(response);
+        getStudents();
+        setSelectedStudent(null);
         toast.update(toastUpdate, {
           render: 'Cập nhật thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastUpdate, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   const handleDeleteStudent = (student) => {
     if (!window.confirm(`Xác nhận xóa giảng viên ${student.fullname} (${student.code})`)) {
-      return
+      return;
     }
-    const toastDelete = toast.loading('Đang xoá')
+    const toastDelete = toast.loading('Đang xoá');
     axiosClient
       .delete(`admin/students/${student.id}`, student)
       .then((response) => {
-        console.log(response)
-        getStudents()
+        console.log(response);
+        getStudents();
         toast.update(toastDelete, {
           render: 'Xóa thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastDelete, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   const handleSubmitImport = (e) => {
-    e.preventDefault()
-    const toastImport = toast.loading('Đang nhập file')
-    const file = importForm.current.file.files[0]
-    const formData = new FormData()
-    formData.append('file', file)
-    console.log(formData)
+    e.preventDefault();
+    const toastImport = toast.loading('Đang nhập file');
+    const file = importForm.current.file.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    console.log(formData);
     axiosClient
       .post('/admin/import/students', formData, {
         headers: {
@@ -168,25 +168,25 @@ const Student = () => {
         },
       })
       .then((response) => {
-        console.log(response)
-        getStudents()
+        console.log(response);
+        getStudents();
         toast.update(toastImport, {
           render: 'Nhập file thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastImport, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   return (
     <div>
@@ -483,7 +483,7 @@ const Student = () => {
         </CModal>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Student
+export default Student;

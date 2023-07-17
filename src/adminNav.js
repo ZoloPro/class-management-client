@@ -1,7 +1,7 @@
-import React from 'react'
-import CIcon from '@coreui/icons-react'
-import { cilSpeedometer } from '@coreui/icons'
-import { CNavItem, CNavTitle } from '@coreui/react'
+import React from 'react';
+import CIcon from '@coreui/icons-react';
+import { cilSpeedometer } from '@coreui/icons';
+import { CNavItem, CNavTitle } from '@coreui/react';
 
 const adminNav = [
   {
@@ -43,6 +43,6 @@ const adminNav = [
     name: 'Quản lý đăng kí lớp học',
     to: '/admin/register-classroom/1',
   },
-]
+];
 
-export default adminNav
+export default adminNav;

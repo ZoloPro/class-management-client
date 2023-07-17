@@ -1,6 +1,6 @@
-import React from 'react'
-import { CButton, CCard, CCardBody, CCardHeader, CCol, CContainer, CRow } from '@coreui/react'
-import { DocsLink } from 'src/components'
+import React from 'react';
+import { CButton, CCard, CCardBody, CCardHeader, CCol, CContainer, CRow } from '@coreui/react';
+import { DocsLink } from 'src/components';
 
 const Jumbotrons = () => {
   return (
@@ -50,7 +50,7 @@ const Jumbotrons = () => {
         </CCardBody>
       </CCard>
     </>
-  )
-}
+  );
+};
 
-export default Jumbotrons
+export default Jumbotrons;

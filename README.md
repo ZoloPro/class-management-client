@@ -3,19 +3,28 @@
 [![NPM downloads][npm-coreui-download]][npm-coreui]  
 [![@coreui react](https://img.shields.io/badge/@coreui%20-react-lightgrey.svg?style=flat-square)](https://github.com/coreui/react)
 [![npm package][npm-coreui-react-badge]][npm-coreui-react]
-[![NPM downloads][npm-coreui-react-download]][npm-coreui-react]  
+[![NPM downloads][npm-coreui-react-download]][npm-coreui-react]
 
 [npm-coreui]: https://www.npmjs.com/package/@coreui/coreui
+
 [npm-coreui-badge]: https://img.shields.io/npm/v/@coreui/coreui.png?style=flat-square
+
 [npm-coreui-download]: https://img.shields.io/npm/dm/@coreui/coreui.svg?style=flat-square
+
 [npm-coreui-react]: https://www.npmjs.com/package/@coreui/react
+
 [npm-coreui-react-badge]: https://img.shields.io/npm/v/@coreui/react.png?style=flat-square
+
 [npm-coreui-react-download]: https://img.shields.io/npm/dm/@coreui/react.svg?style=flat-square
+
 [npm]: https://www.npmjs.com/package/@coreui/react
 
 # CoreUI Free React Admin Template
 
-CoreUI is meant to be the UX game changer. Pure & transparent code is devoid of redundant components, so the app is light enough to offer ultimate user experience. This means mobile devices also, where the navigation is just as easy and intuitive as on a desktop or laptop. The CoreUI Layout API lets you customize your project for almost any device – be it Mobile, Web or WebApp – CoreUI covers them all!
+CoreUI is meant to be the UX game changer. Pure & transparent code is devoid of redundant components, so the app is
+light enough to offer ultimate user experience. This means mobile devices also, where the navigation is just as easy and
+intuitive as on a desktop or laptop. The CoreUI Layout API lets you customize your project for almost any device – be it
+Mobile, Web or WebApp – CoreUI covers them all!
 
 ## Table of Contents
 
@@ -70,14 +79,15 @@ $ yarn install
 $ npm start 
 ```
 
-or 
+or
 
 ``` bash
 # dev server with hot reload at http://localhost:3000
 $ yarn start
 ```
 
-Navigate to [http://localhost:3000](http://localhost:3000). The app will automatically reload if you change any of the source files.
+Navigate to [http://localhost:3000](http://localhost:3000). The app will automatically reload if you change any of the
+source files.
 
 #### Build
 
@@ -97,7 +107,8 @@ $ yarn build
 
 ## What's included
 
-Within the download you'll find the following directories and files, logically grouping common assets and providing both compiled and minified variations. You'll see something like this:
+Within the download you'll find the following directories and files, logically grouping common assets and providing both
+compiled and minified variations. You'll see something like this:
 
 ```
 coreui-free-react-admin-template
@@ -126,18 +137,22 @@ The documentation for the CoreUI Admin Template is hosted at our website [CoreUI
 
 ## Versioning
 
-For transparency into our release cycle and in striving to maintain backward compatibility, CoreUI Free Admin Template is maintained under [the Semantic Versioning guidelines](http://semver.org/).
+For transparency into our release cycle and in striving to maintain backward compatibility, CoreUI Free Admin Template
+is maintained under [the Semantic Versioning guidelines](http://semver.org/).
 
-See [the Releases section of our project](https://github.com/coreui/coreui-free-react-admin-template/releases) for changelogs for each release version.
+See [the Releases section of our project](https://github.com/coreui/coreui-free-react-admin-template/releases) for
+changelogs for each release version.
 
 ## Creators
 
 **Łukasz Holeczek**
+
 * <https://twitter.com/lukaszholeczek>
 * <https://github.com/mrholek>
 * <https://github.com/coreui>
 
 **CoreUI team**
+
 * https://github.com/orgs/coreui/people
 
 ## Community
@@ -149,37 +164,46 @@ Get updates on CoreUI's development and chat with the project maintainers and co
 
 ## Support CoreUI Development
 
-CoreUI is an MIT-licensed open source project and is completely free to use. However, the amount of effort needed to maintain and develop new features for the project is not sustainable without proper financial backing. You can support development by buying the [CoreUI PRO](https://coreui.io/pricing/) or by becoming a sponsor via [Open Collective](https://opencollective.com/coreui/).
+CoreUI is an MIT-licensed open source project and is completely free to use. However, the amount of effort needed to
+maintain and develop new features for the project is not sustainable without proper financial backing. You can support
+development by buying the [CoreUI PRO](https://coreui.io/pricing/) or by becoming a sponsor
+via [Open Collective](https://opencollective.com/coreui/).
 
 <!--- StartOpenCollectiveBackers -->
 
 ### Platinum Sponsors
 
-Support this project by [becoming a Platinum Sponsor](https://opencollective.com/coreui/contribute/platinum-sponsor-40959/). A large company logo will be added here with a link to your website.
+Support this project
+by [becoming a Platinum Sponsor](https://opencollective.com/coreui/contribute/platinum-sponsor-40959/). A large company
+logo will be added here with a link to your website.
 
 <a href="https://opencollective.com/coreui/contribute/platinum-sponsor-40959/checkout"><img src="https://opencollective.com/coreui/tiers/platinum-sponsor/0/avatar.svg?avatarHeight=100"></a>
 
 ### Gold Sponsors
 
-Support this project by [becoming a Gold Sponsor](https://opencollective.com/coreui/contribute/gold-sponsor-40960/). A big company logo will be added here with a link to your website.
+Support this project by [becoming a Gold Sponsor](https://opencollective.com/coreui/contribute/gold-sponsor-40960/). A
+big company logo will be added here with a link to your website.
 
-<a href="https://opencollective.com/coreui/contribute/gold-sponsor-40960/checkout"><img src="https://opencollective.com/coreui/tiers/gold-sponsor/0/avatar.svg?avatarHeight=100"></a> 
+<a href="https://opencollective.com/coreui/contribute/gold-sponsor-40960/checkout"><img src="https://opencollective.com/coreui/tiers/gold-sponsor/0/avatar.svg?avatarHeight=100"></a>
 
 ### Silver Sponsors
 
-Support this project by [becoming a Silver Sponsor](https://opencollective.com/coreui/contribute/silver-sponsor-40967/). A medium company logo will be added here with a link to your website.
+Support this project by [becoming a Silver Sponsor](https://opencollective.com/coreui/contribute/silver-sponsor-40967/).
+A medium company logo will be added here with a link to your website.
 
 <a href="https://opencollective.com/coreui/contribute/silver-sponsor-40967/checkout"><img src="https://opencollective.com/coreui/tiers/gold-sponsor/0/avatar.svg?avatarHeight=100"></a>
 
 ### Bronze Sponsors
 
-Support this project by [becoming a Bronze Sponsor](https://opencollective.com/coreui/contribute/bronze-sponsor-40966/). The company avatar will show up here with a link to your OpenCollective Profile.
+Support this project by [becoming a Bronze Sponsor](https://opencollective.com/coreui/contribute/bronze-sponsor-40966/).
+The company avatar will show up here with a link to your OpenCollective Profile.
 
-<a href="https://opencollective.com/coreui/contribute/bronze-sponsor-40966/checkout"><img src="https://opencollective.com/coreui/tiers/bronze-sponsor/0/avatar.svg?avatarHeight=100"></a> 
+<a href="https://opencollective.com/coreui/contribute/bronze-sponsor-40966/checkout"><img src="https://opencollective.com/coreui/tiers/bronze-sponsor/0/avatar.svg?avatarHeight=100"></a>
 
 ### Backers
 
-Thanks to all the backers and sponsors! Support this project by [becoming a backer](https://opencollective.com/coreui/contribute/backer-40965/).
+Thanks to all the backers and sponsors! Support this project
+by [becoming a backer](https://opencollective.com/coreui/contribute/backer-40965/).
 
 <a href="https://opencollective.com/coreui/contribute/backer-40965/checkout" target="_blank" rel="noopener"><img src="https://opencollective.com/coreui/backers.svg?width=890"></a>
 
@@ -187,9 +211,9 @@ Thanks to all the backers and sponsors! Support this project by [becoming a back
 
 ## Copyright and License
 
-copyright 2023 creativeLabs Łukasz Holeczek.   
+copyright 2023 creativeLabs Łukasz Holeczek.
 
- 
 Code released under [the MIT license](https://github.com/coreui/coreui-free-react-admin-template/blob/master/LICENSE).
-There is only one limitation you can't can’t re-distribute the CoreUI as stock. You can’t do this if you modify the CoreUI. In past we faced some problems with persons who tried to sell CoreUI based templates.
+There is only one limitation you can't can’t re-distribute the CoreUI as stock. You can’t do this if you modify the
+CoreUI. In past we faced some problems with persons who tried to sell CoreUI based templates.
 

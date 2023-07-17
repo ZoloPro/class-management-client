@@ -1,29 +1,29 @@
-import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
+import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@coreui/react';
+import CIcon from '@coreui/icons-react';
 
-import { AppSidebarNav } from './AppSidebarNav'
+import { AppSidebarNav } from './AppSidebarNav';
 
-import { logoNegative } from 'src/assets/brand/logo-negative'
-import { sygnet } from 'src/assets/brand/sygnet'
+import { logoNegative } from 'src/assets/brand/logo-negative';
+import { sygnet } from 'src/assets/brand/sygnet';
 
-import SimpleBar from 'simplebar-react'
-import 'simplebar/dist/simplebar.min.css'
+import SimpleBar from 'simplebar-react';
+import 'simplebar/dist/simplebar.min.css';
 
 // sidebar nav config
-import adminNav from '../adminNav'
-import lecturerNav from '../lecturerNav'
+import adminNav from '../adminNav';
+import lecturerNav from '../lecturerNav';
 
-import { AuthContext } from '../context/AuthContext'
+import useAuth from '../auth/useAuth';
 
 const AppSidebar = () => {
-  const dispatch = useDispatch()
-  const unfoldable = useSelector((state) => state.sidebarUnfoldable)
-  const sidebarShow = useSelector((state) => state.sidebarShow)
+  const dispatch = useDispatch();
+  const unfoldable = useSelector((state) => state.sidebarUnfoldable);
+  const sidebarShow = useSelector((state) => state.sidebarShow);
 
-  const { userRole } = React.useContext(AuthContext)
+  const { userRole } = useAuth();
 
   return (
     <CSidebar
@@ -31,7 +31,7 @@ const AppSidebar = () => {
       unfoldable={unfoldable}
       visible={sidebarShow}
       onVisibleChange={(visible) => {
-        dispatch({ type: 'set', sidebarShow: visible })
+        dispatch({ type: 'set', sidebarShow: visible });
       }}
     >
       <CSidebarBrand className="d-none d-md-flex" to="/">
@@ -48,7 +48,7 @@ const AppSidebar = () => {
         onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
       />
     </CSidebar>
-  )
-}
+  );
+};
 
-export default React.memo(AppSidebar)
+export default React.memo(AppSidebar);

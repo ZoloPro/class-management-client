@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - "dependabot/**"
   schedule:
-  - cron: '0 0 * * *'
+    - cron: '0 0 * * *'
 
 env:
   FORCE_COLOR: 2
@@ -15,8 +15,8 @@ jobs:
   build:
     strategy:
       matrix:
-        platform: [ubuntu-latest, windows-latest]
-        node-version: [16.x, 17.x, 18.x]
+        platform: [ ubuntu-latest, windows-latest ]
+        node-version: [ 16.x, 17.x, 18.x ]
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Clone repository

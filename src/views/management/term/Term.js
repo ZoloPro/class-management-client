@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { cilPencil, cilPlus, cilTrash } from '@coreui/icons'
-import CIcon from '@coreui/icons-react'
-import axiosClient from '../../../axios/axios-client'
-import { toast } from 'react-toastify'
+import React, { useEffect, useRef, useState } from 'react';
+import { cilPencil, cilPlus, cilTrash } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
+import axiosClient from '../../../axios/axios-client';
+import { toast } from 'react-toastify';
 import {
   CTable,
   CTableBody,
@@ -23,123 +23,123 @@ import {
   CForm,
   CFormInput,
   CSpinner,
-} from '@coreui/react'
+} from '@coreui/react';
 
 const Term = () => {
-  const [terms, setTerms] = useState([])
-  const [addFormVisible, setAddFormVisible] = useState(false)
-  const [selectedTerm, setSelectedTerm] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [terms, setTerms] = useState([]);
+  const [addFormVisible, setAddFormVisible] = useState(false);
+  const [selectedTerm, setSelectedTerm] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const addFrom = useRef()
-  const updateFrom = useRef()
+  const addFrom = useRef();
+  const updateFrom = useRef();
 
   useEffect(() => {
-    getTerms()
-  }, [])
+    getTerms();
+  }, []);
   const getTerms = () => {
     axiosClient
       .get(`/admin/terms`)
       .then((response) => {
-        console.log(response)
-        setTerms(response?.data?.data?.terms)
-        setLoading(false)
+        console.log(response);
+        setTerms(response?.data?.data?.terms);
+        setLoading(false);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const handleSubmitAdd = (e) => {
-    e.preventDefault()
-    const toastAdd = toast.loading('Đang thêm')
+    e.preventDefault();
+    const toastAdd = toast.loading('Đang thêm');
     const term = {
       termName: addFrom.current.termName.value.trim(),
       credit: addFrom.current.credit.value.trim(),
-    }
+    };
     axiosClient
       .post('admin/terms', term)
       .then((response) => {
-        console.log(response)
-        addFrom.current.reset()
-        getTerms()
-        setAddFormVisible(false)
+        console.log(response);
+        addFrom.current.reset();
+        getTerms();
+        setAddFormVisible(false);
         toast.update(toastAdd, {
           render: 'Thêm thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastAdd, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   const handleSubmitUpdate = (e) => {
-    e.preventDefault()
-    const toastUpdate = toast.loading('Đang cập nhật')
+    e.preventDefault();
+    const toastUpdate = toast.loading('Đang cập nhật');
     const term = {
       termName: updateFrom.current.termName.value.trim(),
       credit: updateFrom.current.credit.value.trim(),
-    }
+    };
     axiosClient
       .put(`admin/terms/${selectedTerm.id}`, term)
       .then((response) => {
-        console.log(response)
-        getTerms()
-        setSelectedTerm(null)
+        console.log(response);
+        getTerms();
+        setSelectedTerm(null);
         toast.update(toastUpdate, {
           render: 'Cập nhật thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastUpdate, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   const handleDeleteTerm = (term) => {
     if (!window.confirm(`Xác nhận xóa học phần ${term.termName} (${term.id})`)) {
-      return
+      return;
     }
-    const toastDelete = toast.loading('Đang xóa')
+    const toastDelete = toast.loading('Đang xóa');
     axiosClient
       .delete(`admin/terms/${term.id}`, term)
       .then((response) => {
-        console.log(response)
-        getTerms()
+        console.log(response);
+        getTerms();
         toast.update(toastDelete, {
           render: 'Xóa thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastDelete, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   return (
     <div>
@@ -264,7 +264,7 @@ const Term = () => {
         </CModal>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Term
+export default Term;

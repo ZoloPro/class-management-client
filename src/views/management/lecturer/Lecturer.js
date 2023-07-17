@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { cilDataTransferUp, cilPencil, cilPlus, cilTrash } from '@coreui/icons'
-import CIcon from '@coreui/icons-react'
-import axiosClient from '../../../axios/axios-client'
-import { toast } from 'react-toastify'
+import React, { useEffect, useRef, useState } from 'react';
+import { cilDataTransferUp, cilPencil, cilPlus, cilTrash } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
+import axiosClient from '../../../axios/axios-client';
+import { toast } from 'react-toastify';
 import {
   CTable,
   CTableBody,
@@ -24,40 +24,40 @@ import {
   CForm,
   CFormInput,
   CSpinner,
-} from '@coreui/react'
+} from '@coreui/react';
 
 const Lecturer = () => {
-  const [lectures, setLecturers] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [lectures, setLecturers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [addFormVisible, setAddFormVisible] = useState(false)
-  const [importFormVisible, setImportFormVisible] = useState(false)
-  const [selectedLecturer, setSelectedLecturer] = useState(null)
+  const [addFormVisible, setAddFormVisible] = useState(false);
+  const [importFormVisible, setImportFormVisible] = useState(false);
+  const [selectedLecturer, setSelectedLecturer] = useState(null);
 
-  const updateFrom = useRef()
-  const addFrom = useRef()
-  const importForm = useRef()
+  const updateFrom = useRef();
+  const addFrom = useRef();
+  const importForm = useRef();
 
   useEffect(() => {
-    getLecturers()
-  }, [])
+    getLecturers();
+  }, []);
 
   const getLecturers = () => {
     axiosClient
       .get(`/admin/lecturers`)
       .then((response) => {
-        console.log(response)
-        setLecturers(response?.data?.data?.lecturers)
-        setLoading(false)
+        console.log(response);
+        setLecturers(response?.data?.data?.lecturers);
+        setLoading(false);
       })
       .catch((error) => {
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const handleSubmitAdd = (e) => {
-    e.preventDefault()
-    const toastAdd = toast.loading('Đang thêm')
+    e.preventDefault();
+    const toastAdd = toast.loading('Đang thêm');
     const lecturer = {
       famMidName: addFrom.current.famMidName.value.trim(),
       name: addFrom.current.name.value.trim(),
@@ -65,35 +65,35 @@ const Lecturer = () => {
       birthdate: addFrom.current.birthdate.value.trim(),
       phone: addFrom.current.phone.value.trim(),
       email: addFrom.current.email.value.trim(),
-    }
+    };
     axiosClient
       .post('admin/lecturers', lecturer)
       .then((response) => {
-        console.log(response)
-        addFrom.current.reset()
-        getLecturers()
-        setAddFormVisible(false)
+        console.log(response);
+        addFrom.current.reset();
+        getLecturers();
+        setAddFormVisible(false);
         toast.update(toastAdd, {
           render: 'Thêm thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastAdd, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   const handleSubmitUpdate = (e, lecturerId) => {
-    e.preventDefault()
-    const toastUpdate = toast.loading('Đang cập nhật')
+    e.preventDefault();
+    const toastUpdate = toast.loading('Đang cập nhật');
     const lecturer = {
       famMidName: updateFrom.current.famMidName.value.trim(),
       name: updateFrom.current.name.value.trim(),
@@ -101,66 +101,66 @@ const Lecturer = () => {
       birthdate: updateFrom.current.birthdate.value.trim(),
       phone: updateFrom.current.phone.value.trim(),
       email: updateFrom.current.email.value.trim(),
-    }
+    };
     axiosClient
       .put(`admin/lecturers/${lecturerId}`, lecturer)
       .then((response) => {
-        console.log(response)
-        getLecturers()
-        setSelectedLecturer(null)
+        console.log(response);
+        getLecturers();
+        setSelectedLecturer(null);
         toast.update(toastUpdate, {
           render: 'Cập nhật thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastUpdate, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   const handleDeleteLecturer = (lecturer) => {
     if (!window.confirm(`Xác nhận xóa giảng viên ${lecturer.fullname} (${lecturer.code})`)) {
-      return
+      return;
     }
-    const toastDelete = toast.loading('Đang xóa')
+    const toastDelete = toast.loading('Đang xóa');
     axiosClient
       .delete(`admin/lecturers/${lecturer.id}`, lecturer)
       .then((response) => {
-        console.log(response)
-        getLecturers()
+        console.log(response);
+        getLecturers();
         toast.update(toastDelete, {
           render: 'Xóa thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastDelete, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   const handleSubmitImport = (e) => {
-    e.preventDefault()
-    const toastImport = toast.loading('Đang nhập file')
-    const file = importForm.current.file.files[0]
-    const formData = new FormData()
-    formData.append('file', file)
-    console.log(formData)
+    e.preventDefault();
+    const toastImport = toast.loading('Đang nhập file');
+    const file = importForm.current.file.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    console.log(formData);
     axiosClient
       .post('/admin/import/lecturers', formData, {
         headers: {
@@ -168,26 +168,26 @@ const Lecturer = () => {
         },
       })
       .then((response) => {
-        console.log(response)
-        getLecturers()
-        setImportFormVisible(false)
+        console.log(response);
+        getLecturers();
+        setImportFormVisible(false);
         toast.update(toastImport, {
           render: 'Nhập file thành công',
           type: 'success',
           isLoading: false,
           autoClose: 3000,
-        })
+        });
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         toast.update(toastImport, {
           render: 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
-        })
-      })
-  }
+        });
+      });
+  };
 
   return (
     <div>
@@ -485,7 +485,7 @@ const Lecturer = () => {
         </CModal>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Lecturer
+export default Lecturer;

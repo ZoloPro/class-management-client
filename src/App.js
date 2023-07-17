@@ -1,5 +1,5 @@
 import React, { Component, Suspense } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import './scss/style.scss';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
@@ -24,7 +24,7 @@ const Page500 = React.lazy(() => import('./views/pages/page500/Page500'));
 class App extends Component {
   render() {
     return (
-      <BrowserRouter>
+      <HashRouter>
         <AuthProvider>
           <Suspense fallback={loading}>
             <Routes>
@@ -38,7 +38,7 @@ class App extends Component {
           </Suspense>
           <ToastContainer />
         </AuthProvider>
-      </BrowserRouter>
+      </HashRouter>
     );
   }
 }

@@ -27,9 +27,12 @@ import {
   CSpinner,
 } from '@coreui/react';
 import { toast } from 'react-toastify';
+import CIcon from '@coreui/icons-react';
+import { cilTrash } from '@coreui/icons';
 
 const RegisterClassroom = () => {
-  const [classrooms, setClassrooms] = useState([]);
+  const [classrooms, setClassrooms] = useState([]); //Lầy toàn bộ danh sách lớp họ để đổ vào Menu
+  const [classroom, setClassroom] = useState(null); //Thông tin lớp học hiện tại
   const [studentList, setStudentList] = useState([]); //Toàn bộ danh sách sinh viên theo mã lớp
   const [students, setStudents] = useState([]); //Toàn bộ danh sách sinh viên
   const [addFormVisible, setAddFormVisible] = useState(false);
@@ -38,15 +41,16 @@ const RegisterClassroom = () => {
   const addFrom = useRef();
   const [selectedStudent, setSelectedStudent] = useState(null);
 
-  useEffect(() => {
-    getStudentList(); //Lấy toàn bộ danh sách sinh viên theo mã lớp
-    getClassroom();
-    getStudents(); //Lấy toàn bộ danh sách sinh viên
-  }, []);
-
   const classroomId = useParams().classroomId;
 
-  const getClassroom = () => {
+  useEffect(() => {
+    setLoading(true);
+    getStudentList(); //Lấy toàn bộ danh sách sinh viên theo mã lớp
+    getClassrooms();
+    getStudents(); //Lấy toàn bộ danh sách sinh viên
+  }, [classroomId]);
+
+  const getClassrooms = () => {
     axiosClient
       .get('/admin/classrooms')
       .then((response) => {
@@ -73,6 +77,11 @@ const RegisterClassroom = () => {
       .get(`/admin/classrooms/${classroomId}`)
       .then((response) => {
         console.log(response);
+        setClassroom(response?.data?.data?.classroom);
+        const students = response?.data?.data?.classroom.students;
+        students.forEach((student) => {
+          student.status = 'Đã lưu';
+        });
         setStudentList(response?.data?.data?.classroom.students);
         setLoading(false);
       })
@@ -83,43 +92,55 @@ const RegisterClassroom = () => {
 
   const handleSubmitAdd = (e) => {
     e.preventDefault();
-    if (studentList.includes(selectedStudent)) {
+    if (studentList.some((student) => student.id === selectedStudent.id)) {
       toast.error('Sinh viên đã có trong danh sách');
       addFrom.current.reset();
       setAddFormVisible(false);
       return;
     }
+    selectedStudent.status = 'Chưa lưu';
     setStudentList([...studentList, selectedStudent]);
+  };
+
+  const handleDelete = (student) => {
+    console.log('Đã vào handleDelete');
+    const newStudentList = studentList.filter((item) => item.id !== student.id);
+    setStudentList(newStudentList);
   };
 
   return (
     <div>
       <CCard>
-        <div className={'d-flex justify-content-between m-2'}>
-          <CDropdown>
-            <CDropdownToggle color="secondary">Chọn lớp</CDropdownToggle>
-            <CDropdownMenu>
-              {classrooms?.map((classroom) => (
-                <CDropdownItem
-                  key={classroom.id}
-                  href={`/admin/register-classroom/${classroom.id}`}
-                >
-                  {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
-                </CDropdownItem>
-              ))}
-            </CDropdownMenu>
-          </CDropdown>
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={() => setAddFormVisible(!addFormVisible)}
-          >
-            Thêm
-          </button>
-          <button type="button" className="btn btn-success">
-            Lưu
-          </button>
-        </div>
+        <CRow className="p-2">
+          <CCol className="d-flex gap-3 align-items-center">
+            <CDropdown>
+              <CDropdownToggle color="secondary">Chọn lớp</CDropdownToggle>
+              <CDropdownMenu>
+                {classrooms?.map((classroom) => (
+                  <CDropdownItem
+                    key={classroom.id}
+                    href={`#/admin/register-classroom/${classroom.id}`}
+                  >
+                    {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
+                  </CDropdownItem>
+                ))}
+              </CDropdownMenu>
+            </CDropdown>
+            {classroom && <span>{`Lớp: ${classroom.term.termName} (mã lớp ${classroomId})`}</span>}
+          </CCol>
+          <CCol className="d-flex justify-content-end gap-3">
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={() => setAddFormVisible(!addFormVisible)}
+            >
+              Thêm
+            </button>
+            <button type="button" className="btn btn-success">
+              Lưu
+            </button>
+          </CCol>
+        </CRow>
         <div className={'m-2'}>
           {loading ? (
             <CSpinner />
@@ -133,14 +154,20 @@ const RegisterClassroom = () => {
                   <CTableHeaderCell scope="col" width={'20%'}>
                     Mã sinh viên
                   </CTableHeaderCell>
-                  <CTableHeaderCell scope="col" width={'30%'}>
+                  <CTableHeaderCell scope="col" width={'20%'}>
                     Họ và lót
                   </CTableHeaderCell>
-                  <CTableHeaderCell scope="col" width={'30%'}>
+                  <CTableHeaderCell scope="col" width={'20%'}>
                     Tên
                   </CTableHeaderCell>
                   <CTableHeaderCell scope="col" width={'10%'}>
                     Giới tính
+                  </CTableHeaderCell>
+                  <CTableHeaderCell scope="col" width={'10%'}>
+                    Trạng thái
+                  </CTableHeaderCell>
+                  <CTableHeaderCell scope="col" width={'10%'}>
+                    Thao tác
                   </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -152,6 +179,16 @@ const RegisterClassroom = () => {
                     <CTableDataCell>{student.famMidName}</CTableDataCell>
                     <CTableDataCell>{student.name}</CTableDataCell>
                     <CTableDataCell>{student.gender}</CTableDataCell>
+                    <CTableDataCell
+                      className={student.status == 'Đã lưu' ? 'text-success' : 'text-danger'}
+                    >
+                      {student.status}
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <CButton color="danger" onClick={() => handleDelete(student)}>
+                        <CIcon icon={cilTrash} />
+                      </CButton>
+                    </CTableDataCell>
                   </CTableRow>
                 ))}
               </CTableBody>

@@ -154,8 +154,7 @@ const routes = [
   {
     path: '/admin/register-classroom/:classroomId',
     name: 'register classroom',
-    element: RegisterClassroom,
-    requiredRole: (
+    element: (
       <ProtectedRoute role={'admin'}>
         <RegisterClassroom />
       </ProtectedRoute>

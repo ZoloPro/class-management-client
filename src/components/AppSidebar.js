@@ -13,8 +13,8 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar/dist/simplebar.min.css';
 
 // sidebar nav config
-import adminNav from '../adminNav';
-import lecturerNav from '../lecturerNav';
+import adminNav from '../nav/adminNav';
+import lecturerNav from '../nav/lecturerNav';
 
 import useAuth from '../auth/useAuth';
 

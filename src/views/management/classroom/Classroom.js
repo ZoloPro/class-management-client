@@ -23,12 +23,18 @@ import {
   CForm,
   CFormInput,
   CFormSelect,
+  CSpinner,
 } from '@coreui/react';
 
 const Classroom = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [lecturers, setLecturers] = useState([]);
   const [terms, setTerms] = useState([]);
+  const [addFormVisible, setAddFormVisible] = useState(false);
+  const [selectedClassroom, setSelectedClassroom] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const addFrom = useRef();
 
   useEffect(() => {
     getClassrooms();
@@ -41,6 +47,7 @@ const Classroom = () => {
       .then((response) => {
         console.log(response);
         setClassrooms(response?.data?.data?.classrooms);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -70,11 +77,6 @@ const Classroom = () => {
         console.log(error);
       });
   };
-
-  const [addFormVisible, setAddFormVisible] = useState(false);
-  const [selectedClassroom, setSelectedClassroom] = useState(null);
-
-  const addFrom = useRef();
 
   const handleSubmitAdd = (e) => {
     e.preventDefault();
@@ -132,37 +134,41 @@ const Classroom = () => {
           </CButton>
         </div>
         <div className={'m-2'}>
-          <CTable bordered>
-            <CTableHead>
-              <CTableRow>
-                <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Mã lớp học</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Giảng viên</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Học phần</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Thao tác</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              {classrooms.map((classroom, index) => (
-                <CTableRow key={classroom.id}>
-                  <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                  <CTableDataCell>{classroom.id}</CTableDataCell>
-                  <CTableDataCell>
-                    {`${classroom.lecturer.fullname} (${classroom.lecturer.code})`}
-                  </CTableDataCell>
-                  <CTableDataCell>{`${classroom.term.termName} (${classroom.term.id})`}</CTableDataCell>
-                  <CTableDataCell>
-                    <CButton color="primary" onClick={() => setSelectedClassroom(classroom)}>
-                      <CIcon icon={cilPencil} />
-                    </CButton>
-                    <CButton color="danger" onClick={() => handleDelete(classroom)}>
-                      <CIcon icon={cilTrash} />
-                    </CButton>
-                  </CTableDataCell>
+          {loading ? (
+            <CSpinner />
+          ) : (
+            <CTable bordered>
+              <CTableHead>
+                <CTableRow>
+                  <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Mã lớp học</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Giảng viên</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Học phần</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Thao tác</CTableHeaderCell>
                 </CTableRow>
-              ))}
-            </CTableBody>
-          </CTable>
+              </CTableHead>
+              <CTableBody>
+                {classrooms.map((classroom, index) => (
+                  <CTableRow key={classroom.id}>
+                    <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                    <CTableDataCell>{classroom.id}</CTableDataCell>
+                    <CTableDataCell>
+                      {`${classroom.lecturer.fullname} (${classroom.lecturer.code})`}
+                    </CTableDataCell>
+                    <CTableDataCell>{`${classroom.term.termName} (${classroom.term.id})`}</CTableDataCell>
+                    <CTableDataCell>
+                      <CButton color="primary" onClick={() => setSelectedClassroom(classroom)}>
+                        <CIcon icon={cilPencil} />
+                      </CButton>
+                      <CButton color="danger" onClick={() => handleDelete(classroom)}>
+                        <CIcon icon={cilTrash} />
+                      </CButton>
+                    </CTableDataCell>
+                  </CTableRow>
+                ))}
+              </CTableBody>
+            </CTable>
+          )}
         </div>
       </CCard>
       <CModal visible={addFormVisible} onClose={() => setAddFormVisible(false)}>

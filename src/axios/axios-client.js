@@ -17,8 +17,8 @@ axiosClient.interceptors.response.use(
   (error) => {
     const { response } = error;
     if (response.status === 401) {
-      localStorage.removeItem('token');
-      // window.location.reload();
+      localStorage.removeItem('token', 'role', 'user');
+      window.location.reload();
     } else if (response.status === 404) {
       //Show not found
     }

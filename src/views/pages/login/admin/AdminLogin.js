@@ -17,6 +17,7 @@ import {
 } from '@coreui/react';
 import { AuthContext } from '../../../../context/AuthContext';
 import AxiosClient from '../../../../axios/axios-client';
+import { toast } from 'react-toastify';
 
 const AdminLogin = () => {
   const [code, setCode] = useState();
@@ -27,6 +28,7 @@ const AdminLogin = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
+    const loginToast = toast.loading('Đang đăng nhập');
     // Thực hiện đăng nhập và nhận lại token
     AxiosClient.post('/admin/login', { code, password })
       .then((response) => {
@@ -34,9 +36,16 @@ const AdminLogin = () => {
         const user = response?.data?.data?.user;
         login(token, 'admin', user); // Lưu token và vai trò vào AuthContext
         navigate('/'); // Điều hướng đến trang chủ admin
+        toast.dismiss(loginToast);
       })
       .catch((error) => {
         console.log(error); // Xử lý lỗi đăng nhập, hiển thị thông báo lỗi, v.v.
+        toast.update(loginToast, {
+          render: error?.response?.data?.message,
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
       });
   };
 

@@ -74,7 +74,7 @@ const Term = () => {
       .catch((error) => {
         console.log(error);
         toast.update(toastAdd, {
-          render: 'Đã xảy ra lỗi',
+          render: error.response.data.message || 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
@@ -105,7 +105,7 @@ const Term = () => {
       .catch((error) => {
         console.log(error);
         toast.update(toastUpdate, {
-          render: 'Đã xảy ra lỗi',
+          render: error.response.data.message || 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,
@@ -133,7 +133,7 @@ const Term = () => {
       .catch((error) => {
         console.log(error);
         toast.update(toastDelete, {
-          render: 'Đã xảy ra lỗi',
+          render: error.response.data.message || 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,

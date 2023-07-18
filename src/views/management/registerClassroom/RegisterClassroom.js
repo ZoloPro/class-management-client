@@ -108,6 +108,30 @@ const RegisterClassroom = () => {
     setStudentList(newStudentList);
   };
 
+  const handleSave = () => {
+    const saveToast = toast.loading('Đang lưu');
+    const studentIds = studentList.map((student) => student.id);
+    axiosClient
+      .put(`/admin/classrooms/${classroomId}/student`, { students: studentIds })
+      .then((response) => {
+        getStudentList();
+        toast.update(saveToast, {
+          render: 'Lưu thành công',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      })
+      .catch((error) => {
+        toast.update(saveToast, {
+          render: error.response.data.message || 'Đã xảy ra lỗi',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
+        console.log(error);
+      });
+  };
   return (
     <div>
       <CCard>
@@ -136,7 +160,7 @@ const RegisterClassroom = () => {
             >
               Thêm
             </button>
-            <button type="button" className="btn btn-success">
+            <button type="button" className="btn btn-success" onClick={handleSave}>
               Lưu
             </button>
           </CCol>

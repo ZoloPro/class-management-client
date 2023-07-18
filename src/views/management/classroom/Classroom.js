@@ -80,6 +80,7 @@ const Classroom = () => {
 
   const handleSubmitAdd = (e) => {
     e.preventDefault();
+    const addToast = toast.loading('Đang thêm');
     const classroom = {
       termId: addFrom.current.term.value,
       lecturerId: addFrom.current.lecturer.value,
@@ -91,10 +92,21 @@ const Classroom = () => {
         addFrom.current.reset();
         getClassrooms();
         setAddFormVisible(false);
-        toast.success('Thêm lớp học thành công');
+        toast.update(addToast, {
+          render: 'Thêm thành công',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
       })
       .catch((error) => {
         console.log(error);
+        toast.update(addToast, {
+          render: error.response.data.message || 'Đã xảy ra lỗi',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
       });
   };
 
@@ -110,18 +122,27 @@ const Classroom = () => {
     ) {
       return;
     }
+    const deleteToast = toast.loading('Đang xóa');
     axiosClient
       .delete(`admin/classrooms/${classroom.id}`, classroom)
       .then((response) => {
         console.log(response);
         getClassrooms();
-        toast.success('Xóa lớp học thành công');
+        toast.update(deleteToast, {
+          render: 'Xóa thành công',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
       })
       .catch((error) => {
-        if (error.response) {
-          toast.error(error.response.data.message);
-        }
         console.log(error);
+        toast.update(deleteToast, {
+          render: error.response.data.message || 'Đã xảy ra lỗi',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
       });
   };
 

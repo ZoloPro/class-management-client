@@ -49,7 +49,7 @@ const LecturerLogin = () => {
       .catch((error) => {
         console.log(error); // Xử lý lỗi đăng nhập, hiển thị thông báo lỗi, v.v.
         toast.update(loginToast, {
-          render: error?.response?.data?.message,
+          render: error.response.data.message || 'Đã xảy ra lỗi',
           type: 'error',
           isLoading: false,
           autoClose: 3000,

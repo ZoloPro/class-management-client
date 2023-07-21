@@ -3,6 +3,7 @@ import { cilDataTransferUp, cilPencil, cilPlus, cilTrash } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import axiosClient from '../../../axios/axios-client';
 import { toast } from 'react-toastify';
+import { ReactComponent as ExcelIcon } from '../../../assets/images/icon-excel.svg';
 import {
   CTable,
   CTableBody,
@@ -88,6 +89,45 @@ const Lecturer = () => {
           isLoading: false,
           autoClose: 3000,
         });
+      });
+  };
+
+  const handleDownload = (e) => {
+    e.preventDefault();
+    axiosClient
+      .get('admin/import/lecturers/example', { responseType: 'blob' })
+      .then((response) => {
+        const href = window.URL.createObjectURL(response.data);
+
+        const anchorElement = document.createElement('a');
+
+        anchorElement.href = href;
+
+        // 1) Get the value of content-disposition header
+        const contentDisposition = response.headers['content-disposition'];
+
+        // 2) set the fileName variable to the default value
+        let fileName = 'example-student.xlsx';
+
+        // 3) if the header is set, extract the filename
+        if (contentDisposition) {
+          const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+          console.log('fileNameMatch', fileNameMatch);
+          if (fileNameMatch.length === 2) {
+            fileName = fileNameMatch[1];
+          }
+        }
+
+        anchorElement.download = fileName || 'example-lecturers.xlsx';
+
+        document.body.appendChild(anchorElement);
+        anchorElement.click();
+
+        document.body.removeChild(anchorElement);
+        window.URL.revokeObjectURL(href);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -354,6 +394,10 @@ const Lecturer = () => {
             </CRow>
           </CModalBody>
           <CModalFooter>
+            <a onClick={handleDownload} className="fs-6 flex-grow-1" style={{ cursor: 'pointer' }}>
+              <ExcelIcon style={{ height: '32px' }} />
+              File mẫu
+            </a>
             <CButton color="secondary" onClick={() => setImportFormVisible(false)}>
               Đóng
             </CButton>

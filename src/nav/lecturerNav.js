@@ -25,13 +25,18 @@ const adminNav = [
   },
   {
     component: CNavItem,
+    name: 'Điểm danh',
+    to: '/checkin',
+  },
+  {
+    component: CNavItem,
     name: 'Nhập điểm',
     to: '/mark',
   },
   {
     component: CNavItem,
     name: 'Tài liệu',
-    to: '/doc',
+    to: '/document',
   },
   {
     component: CNavItem,

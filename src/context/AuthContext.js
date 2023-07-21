@@ -1,4 +1,6 @@
 import React, { createContext, useEffect, useState } from 'react';
+import axiosClient from '../axios/axios-client';
+import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
 
@@ -19,10 +21,20 @@ export const AuthProvider = ({ children }) => {
     setUser(user);
   };
 
+  const navigate = useNavigate();
   const logout = () => {
+    axiosClient
+      .get(`/${userRole}/logout`)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setToken(null);
     setUserRole(null);
     setUser(null);
+    navigate(userRole === 'admin' ? 'admin/login' : '/login');
   };
 
   const isAuthenticated = !!token;

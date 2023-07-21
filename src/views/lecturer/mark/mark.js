@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import axiosClient from '../../../axios/axios-client';
+import { useParams } from 'react-router-dom';
 import {
   CTable,
   CTableBody,
@@ -13,56 +15,71 @@ import {
   CDropdown,
 } from '@coreui/react';
 
-const Attendance = () => {
-  const [data, setData] = useState([
-    { code: 1, famMidName: 'John', name: 'fdfd', mark: 23 },
-    { code: 2, famMidName: 'John', name: 'fdfd', mark: 23 },
-    { code: 3, famMidName: 'John', name: 'fdfd', mark: 23 },
-    { code: 4, famMidName: 'John', name: 'fdfd', mark: 23 },
-    // ...more data
-  ]);
+const Mark = () => {
+  const [classrooms, setClassrooms] = useState([]);
+  const [marks, setMarks] = useState([]);
+
+  useEffect(() => {
+    getClass();
+  }, []);
+
+  const classroomId = useParams().classroomId;
+
+  const getClass = () => {
+    axiosClient
+      .get('/lecturer/classrooms')
+      .then((response) => {
+        setClassrooms(response.data.classrooms);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getMarks = () => {
+    axiosClient
+      .get(`/lecturer/classrooms/${classroomId}/mark`)
+      .then((response) => {
+        console.log(response);
+        setMarks(response?.data.markList);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  if (classroomId) {
+    getMarks();
+  }
 
   const handleCellChange = (event, code, field) => {
-    const newData = data.map((item) => {
-      if (item.code === code) {
+    const newMarks = marks.map((mark) => {
+      if (mark.code === code) {
         return {
-          ...item,
+          ...mark,
           [field]: event.target.value,
         };
       }
-      return item;
+      return mark;
     });
-    setData(newData);
+    setMarks(newMarks);
   };
-  /*const [students, setStudents] = useState([])
-
-  useEffect(() => {
-    fetchStudents();
-  }, []);
-
-  const fetchStudents = async () => {
-    try {
-      const response = await fetch('API_URL'); // Thay thế 'API_URL' bằng URL thực tế của API
-      const data = await response.json();
-      setStudents(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };*/
 
   return (
     <CCard>
-      <div className={'m-2'}>
+      <div className={'d-flex justify-content-between m-2'}>
         <CDropdown>
           <CDropdownToggle color="secondary">Chọn lớp</CDropdownToggle>
           <CDropdownMenu>
-            <CDropdownItem href="#">Action</CDropdownItem>
-            <CDropdownItem href="#">Another action</CDropdownItem>
-            <CDropdownItem href="#">Something else here</CDropdownItem>
+            {classrooms?.map((classroom) => (
+              <CDropdownItem key={classroom.id} href="">
+                {`${classroom.termName} (mã lớp: ${classroom.id})`}
+              </CDropdownItem>
+            ))}
           </CDropdownMenu>
         </CDropdown>
         <button type="button" className="btn btn-success">
-          Success
+          Lưu
         </button>
       </div>
       <div className={'m-2'}>
@@ -87,18 +104,18 @@ const Attendance = () => {
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {data.map((item, index) => (
-              <CTableRow key={item.code}>
+            {marks?.map((mark, index) => (
+              <CTableRow key={mark.code}>
                 <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                <CTableDataCell>{item.code}</CTableDataCell>
-                <CTableDataCell>{item.famMidName}</CTableDataCell>
-                <CTableDataCell>{item.name}</CTableDataCell>
+                <CTableDataCell>{mark.code}</CTableDataCell>
+                <CTableDataCell>{mark.famMidName}</CTableDataCell>
+                <CTableDataCell>{mark.name}</CTableDataCell>
                 <CTableDataCell>
                   <input
                     type="text"
-                    defaultValue={item.mark}
+                    defaultValue={mark.mark ? mark.mark : ''}
                     className={'editable-cell'}
-                    onInput={(event) => handleCellChange(event, item.code, 'mark')}
+                    onInput={(event) => handleCellChange(event, mark.code, 'mark')}
                   />
                 </CTableDataCell>
               </CTableRow>
@@ -110,4 +127,4 @@ const Attendance = () => {
   );
 };
 
-export default Attendance;
+export default Mark;

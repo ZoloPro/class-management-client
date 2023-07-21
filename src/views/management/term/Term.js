@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { cilPencil, cilPlus, cilTrash } from '@coreui/icons';
+import { cilDataTransferUp, cilPencil, cilPlus, cilTrash } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import axiosClient from '../../../axios/axios-client';
 import { toast } from 'react-toastify';
+import { ReactComponent as ExcelIcon } from '../../../assets/images/icon-excel.svg';
 import {
   CTable,
   CTableBody,
@@ -30,9 +31,11 @@ const Term = () => {
   const [addFormVisible, setAddFormVisible] = useState(false);
   const [selectedTerm, setSelectedTerm] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [importFormVisible, setImportFormVisible] = useState(false);
 
   const addFrom = useRef();
   const updateFrom = useRef();
+  const importForm = useRef();
 
   useEffect(() => {
     getTerms();
@@ -141,12 +144,90 @@ const Term = () => {
       });
   };
 
+  const handleDownload = (e) => {
+    e.preventDefault();
+    axiosClient
+      .get('admin/import/terms/example', { responseType: 'blob' })
+      .then((response) => {
+        const href = window.URL.createObjectURL(response.data);
+
+        const anchorElement = document.createElement('a');
+
+        anchorElement.href = href;
+
+        // 1) Get the value of content-disposition header
+        const contentDisposition = response.headers['content-disposition'];
+
+        // 2) set the fileName variable to the default value
+        let fileName = 'example-student.xlsx';
+
+        // 3) if the header is set, extract the filename
+        if (contentDisposition) {
+          const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+          console.log('fileNameMatch', fileNameMatch);
+          if (fileNameMatch.length === 2) {
+            fileName = fileNameMatch[1];
+          }
+        }
+
+        anchorElement.download = fileName || 'example-lecturers.xlsx';
+
+        document.body.appendChild(anchorElement);
+        anchorElement.click();
+
+        document.body.removeChild(anchorElement);
+        window.URL.revokeObjectURL(href);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleSubmitImport = (e) => {
+    e.preventDefault();
+    const toastImport = toast.loading('Đang nhập file');
+    const file = importForm.current.file.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    console.log(formData);
+    axiosClient
+      .post('/admin/import/terms', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        getTerms();
+        setImportFormVisible(false);
+        toast.update(toastImport, {
+          render: 'Nhập file thành công',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.update(toastImport, {
+          render: error.response.data.message || 'Đã xảy ra lỗi',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
+  };
+
   return (
     <div>
       <CCard>
         <div className={'m-2 d-flex gap-4 justify-content-end'}>
           <CButton color="success" onClick={() => setAddFormVisible(!addFormVisible)}>
             <CIcon icon={cilPlus} /> Thêm
+          </CButton>
+          <CButton color="success" onClick={() => setImportFormVisible(!importFormVisible)}>
+            <CIcon icon={cilDataTransferUp} />
+            Nhập từ file
           </CButton>
         </div>
         <div className={'m-2'}>
@@ -214,6 +295,35 @@ const Term = () => {
             </CButton>
             <CButton color="primary" type="submit">
               Thêm
+            </CButton>
+          </CModalFooter>
+        </CForm>
+      </CModal>
+      <CModal visible={importFormVisible} onClose={() => setImportFormVisible(false)}>
+        <CModalHeader>
+          <CModalTitle>Thêm sinh viên</CModalTitle>
+        </CModalHeader>
+        <CForm ref={importForm} onSubmit={handleSubmitImport} method="POST ">
+          <CModalBody>
+            <CRow className="mb-3">
+              <CFormLabel htmlFor="inputFile" className="col-sm-3 col-form-label">
+                Chọn file
+              </CFormLabel>
+              <CCol sm={9}>
+                <CFormInput type="file" id="inputFile" name="file" />
+              </CCol>
+            </CRow>
+          </CModalBody>
+          <CModalFooter>
+            <a onClick={handleDownload} className="fs-6 flex-grow-1" style={{ cursor: 'pointer' }}>
+              <ExcelIcon style={{ height: '32px' }} />
+              File mẫu
+            </a>
+            <CButton color="secondary" onClick={() => setImportFormVisible(false)}>
+              Đóng
+            </CButton>
+            <CButton color="primary" type="submit">
+              Nhập
             </CButton>
           </CModalFooter>
         </CForm>

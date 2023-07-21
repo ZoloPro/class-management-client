@@ -3,6 +3,7 @@ import { cilDataTransferUp, cilPencil, cilPlus, cilTrash } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import axiosClient from '../../../axios/axios-client';
 import { toast } from 'react-toastify';
+import { ReactComponent as ExcelIcon } from '../../../assets/images/icon-excel.svg';
 import {
   CTable,
   CTableBody,
@@ -127,7 +128,7 @@ const Student = () => {
   };
 
   const handleDeleteStudent = (student) => {
-    if (!window.confirm(`Xác nhận xóa giảng viên ${student.fullname} (${student.code})`)) {
+    if (!window.confirm(`Xác nhận xóa sinh viên ${student.fullname} (${student.code})`)) {
       return;
     }
     const toastDelete = toast.loading('Đang xoá');
@@ -170,6 +171,7 @@ const Student = () => {
       .then((response) => {
         console.log(response);
         getStudents();
+        setImportFormVisible(false);
         toast.update(toastImport, {
           render: 'Nhập file thành công',
           type: 'success',
@@ -185,6 +187,45 @@ const Student = () => {
           isLoading: false,
           autoClose: 3000,
         });
+      });
+  };
+
+  const handleDownload = (e) => {
+    e.preventDefault();
+    axiosClient
+      .get('admin/import/students/example', { responseType: 'blob' })
+      .then((response) => {
+        const href = window.URL.createObjectURL(response.data);
+
+        const anchorElement = document.createElement('a');
+
+        anchorElement.href = href;
+
+        // 1) Get the value of content-disposition header
+        const contentDisposition = response.headers['content-disposition'];
+
+        // 2) set the fileName variable to the default value
+        let fileName = 'example-student.xlsx';
+
+        // 3) if the header is set, extract the filename
+        if (contentDisposition) {
+          const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+          console.log('fileNameMatch', fileNameMatch);
+          if (fileNameMatch.length === 2) {
+            fileName = fileNameMatch[1];
+          }
+        }
+
+        anchorElement.download = fileName || 'example-lecturers.xlsx';
+
+        document.body.appendChild(anchorElement);
+        anchorElement.click();
+
+        document.body.removeChild(anchorElement);
+        window.URL.revokeObjectURL(href);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -258,7 +299,7 @@ const Student = () => {
       </CCard>
       <CModal visible={addFormVisible} onClose={() => setAddFormVisible(false)}>
         <CModalHeader>
-          <CModalTitle>Thêm giảng viên</CModalTitle>
+          <CModalTitle>Thêm sinh viên</CModalTitle>
         </CModalHeader>
         <CForm ref={addFrom} onSubmit={handleSubmitAdd} method="POST ">
           <CModalBody>
@@ -338,7 +379,7 @@ const Student = () => {
       </CModal>
       <CModal visible={importFormVisible} onClose={() => setImportFormVisible(false)}>
         <CModalHeader>
-          <CModalTitle>Thêm giảng viên</CModalTitle>
+          <CModalTitle>Thêm sinh viên</CModalTitle>
         </CModalHeader>
         <CForm ref={importForm} onSubmit={handleSubmitImport} method="POST ">
           <CModalBody>
@@ -352,11 +393,15 @@ const Student = () => {
             </CRow>
           </CModalBody>
           <CModalFooter>
+            <a onClick={handleDownload} className="fs-6 flex-grow-1" style={{ cursor: 'pointer' }}>
+              <ExcelIcon style={{ height: '32px' }} />
+              File mẫu
+            </a>
             <CButton color="secondary" onClick={() => setImportFormVisible(false)}>
               Đóng
             </CButton>
             <CButton color="primary" type="submit">
-              Thêm
+              Nhập
             </CButton>
           </CModalFooter>
         </CForm>
@@ -364,7 +409,7 @@ const Student = () => {
       {selectedStudent && (
         <CModal backdrop={'static'} visible={true} onClose={() => setSelectedStudent(null)}>
           <CModalHeader>
-            <CModalTitle> Cập nhật thông tin giảng viên</CModalTitle>
+            <CModalTitle> Cập nhật thông tin sinh viên</CModalTitle>
           </CModalHeader>
           <CForm
             ref={updateFrom}

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axiosClient from '../../../axios/axios-client';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import {
   CTable,
@@ -34,20 +34,15 @@ const RegisterClassroom = () => {
   const [classrooms, setClassrooms] = useState([]); //Lầy toàn bộ danh sách lớp họ để đổ vào Menu
   const [classroom, setClassroom] = useState(null); //Thông tin lớp học hiện tại
   const [studentList, setStudentList] = useState([]); //Toàn bộ danh sách sinh viên theo mã lớp
-  const [students, setStudents] = useState([]); //Toàn bộ danh sách sinh viên
-  const [addFormVisible, setAddFormVisible] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  const addFrom = useRef();
-  const [selectedStudent, setSelectedStudent] = useState(null);
 
   const classroomId = useParams().classroomId;
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    setLoading(true);
     getStudentList(); //Lấy toàn bộ danh sách sinh viên theo mã lớp
     getClassrooms();
-    getStudents(); //Lấy toàn bộ danh sách sinh viên
   }, [classroomId]);
 
   const getClassrooms = () => {
@@ -55,17 +50,6 @@ const RegisterClassroom = () => {
       .get('/admin/classrooms')
       .then((response) => {
         setClassrooms(response?.data?.data?.classrooms);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const getStudents = () => {
-    axiosClient
-      .get('/admin/students')
-      .then((response) => {
-        setStudents(response?.data?.data?.students);
       })
       .catch((error) => {
         console.log(error);
@@ -90,48 +74,6 @@ const RegisterClassroom = () => {
       });
   };
 
-  const handleSubmitAdd = (e) => {
-    e.preventDefault();
-    if (studentList.some((student) => student.id === selectedStudent.id)) {
-      toast.error('Sinh viên đã có trong danh sách');
-      addFrom.current.reset();
-      setAddFormVisible(false);
-      return;
-    }
-    selectedStudent.status = 'Chưa lưu';
-    setStudentList([...studentList, selectedStudent]);
-  };
-
-  const handleDelete = (student) => {
-    console.log('Đã vào handleDelete');
-    const newStudentList = studentList.filter((item) => item.id !== student.id);
-    setStudentList(newStudentList);
-  };
-
-  const handleSave = () => {
-    const saveToast = toast.loading('Đang lưu');
-    const studentIds = studentList.map((student) => student.id);
-    axiosClient
-      .put(`/admin/classrooms/${classroomId}/student`, { students: studentIds })
-      .then((response) => {
-        getStudentList();
-        toast.update(saveToast, {
-          render: 'Lưu thành công',
-          type: 'success',
-          isLoading: false,
-          autoClose: 3000,
-        });
-      })
-      .catch((error) => {
-        toast.update(saveToast, {
-          render: error.response.data.message || 'Đã xảy ra lỗi',
-          type: 'error',
-          isLoading: false,
-          autoClose: 3000,
-        });
-        console.log(error);
-      });
-  };
   return (
     <div>
       <CCard>
@@ -152,17 +94,15 @@ const RegisterClassroom = () => {
             </CDropdown>
             {classroom && <span>{`Lớp: ${classroom.term.termName} (mã lớp ${classroomId})`}</span>}
           </CCol>
-          <CCol className="d-flex justify-content-end gap-3">
-            <button
-              type="button"
-              className="btn btn-success"
-              onClick={() => setAddFormVisible(!addFormVisible)}
+          <CCol className="text-end ">
+            <CButton
+              color="primary"
+              onClick={() => {
+                navigate(`/admin/register-classroom/${classroomId}/add`);
+              }}
             >
-              Thêm
-            </button>
-            <button type="button" className="btn btn-success" onClick={handleSave}>
-              Lưu
-            </button>
+              Chỉnh sửa
+            </CButton>
           </CCol>
         </CRow>
         <div className={'m-2'}>
@@ -209,7 +149,7 @@ const RegisterClassroom = () => {
                       {student.status}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <CButton color="danger" onClick={() => handleDelete(student)}>
+                      <CButton color="danger">
                         <CIcon icon={cilTrash} />
                       </CButton>
                     </CTableDataCell>
@@ -220,38 +160,6 @@ const RegisterClassroom = () => {
           )}
         </div>
       </CCard>
-      <CModal backdrop="static" visible={addFormVisible} onClose={() => setAddFormVisible(false)}>
-        <CModalHeader>
-          <CModalTitle>Thêm sinh viên</CModalTitle>
-        </CModalHeader>
-        <CForm ref={addFrom} onSubmit={handleSubmitAdd} method="POST ">
-          <CModalBody>
-            <CRow className="mb-3">
-              <CFormLabel htmlFor="inputStudent" className="col-sm-3 col-form-label">
-                Chọn sinh viên
-              </CFormLabel>
-              <CCol sm={9}>
-                <Select
-                  name="student"
-                  onChange={(selectedOption) => setSelectedStudent(selectedOption.value)}
-                  options={students.map((student) => ({
-                    value: student,
-                    label: `${student.fullname} (MSSV: ${student.code})`,
-                  }))}
-                />
-              </CCol>
-            </CRow>
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="secondary" onClick={() => setAddFormVisible(false)}>
-              Đóng
-            </CButton>
-            <CButton color="primary" type="submit">
-              Thêm
-            </CButton>
-          </CModalFooter>
-        </CForm>
-      </CModal>
     </div>
   );
 };

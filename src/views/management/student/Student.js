@@ -4,6 +4,8 @@ import CIcon from '@coreui/icons-react';
 import axiosClient from '../../../axios/axios-client';
 import { toast } from 'react-toastify';
 import { ReactComponent as ExcelIcon } from '../../../assets/images/icon-excel.svg';
+import { Formik, Field, Form } from 'formik';
+import * as Yup from 'yup';
 import {
   CTable,
   CTableBody,
@@ -35,9 +37,20 @@ const Student = () => {
   const [importFormVisible, setImportFormVisible] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
-  const updateFrom = useRef();
-  const addFrom = useRef();
   const importForm = useRef();
+
+  const validationSchema = Yup.object().shape({
+    famMidName: Yup.string().required('Vui lòng nhập họ và lót'),
+    name: Yup.string().required('Vui lòng nhập tên'),
+    gender: Yup.string().required('Vui lòng chọn giới tính'),
+    birthdate: Yup.date().required('Vui lòng nhập ngày sinh'),
+    phone: Yup.string()
+      .required('Vui lòng nhập số điện thoại')
+      .min(8, 'Số điện thoại không hợp lệ')
+      .max(11, 'Số điện thoại không hợp lệ'),
+    email: Yup.string().email('Email không hợp lệ').required('Vui lòng nhập email'),
+    enrollmentDate: Yup.date().required('Vui lòng nhập ngày nhập học'),
+  });
 
   useEffect(() => {
     getStudents();
@@ -56,22 +69,13 @@ const Student = () => {
       });
   };
 
-  const handleSubmitAdd = (e) => {
-    e.preventDefault();
+  const handleSubmitAdd = (values) => {
+    const student = values;
     const toastAdd = toast.loading('Đang thêm');
-    const student = {
-      famMidName: addFrom.current.famMidName.value.trim(),
-      name: addFrom.current.name.value.trim(),
-      gender: addFrom.current.gender.value,
-      birthdate: addFrom.current.birthdate.value.trim(),
-      phone: addFrom.current.phone.value.trim(),
-      email: addFrom.current.email.value.trim(),
-    };
     axiosClient
       .post('admin/students', student)
       .then((response) => {
         console.log(response);
-        addFrom.current.reset();
         getStudents();
         setAddFormVisible(false);
         toast.update(toastAdd, {
@@ -92,17 +96,9 @@ const Student = () => {
       });
   };
 
-  const handleSubmitUpdate = (e, studentId) => {
-    e.preventDefault();
+  const handleSubmitUpdate = (values, studentId) => {
     const toastUpdate = toast.loading('Đang cập nhật');
-    const student = {
-      famMidName: updateFrom.current.famMidName.value.trim(),
-      name: updateFrom.current.name.value.trim(),
-      gender: updateFrom.current.gender.value,
-      birthdate: updateFrom.current.birthdate.value.trim(),
-      phone: updateFrom.current.phone.value.trim(),
-      email: updateFrom.current.email.value.trim(),
-    };
+    const student = values;
     axiosClient
       .put(`admin/students/${studentId}`, student)
       .then((response) => {
@@ -299,83 +295,153 @@ const Student = () => {
       </CCard>
       <CModal visible={addFormVisible} onClose={() => setAddFormVisible(false)}>
         <CModalHeader>
-          <CModalTitle>Thêm sinh viên</CModalTitle>
+          <CModalTitle> Thêm sinh viên</CModalTitle>
         </CModalHeader>
-        <CForm ref={addFrom} onSubmit={handleSubmitAdd} method="POST ">
-          <CModalBody>
-            <CRow className="mb-3">
-              <CFormLabel htmlFor="inputFamMidName" className="col-sm-3 col-form-label">
-                Họ và lót
-              </CFormLabel>
-              <CCol sm={9}>
-                <CFormInput type="text" id="inputFamMidName" name="famMidName" />
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CFormLabel htmlFor="inputName" className="col-sm-3 col-form-label">
-                Tên
-              </CFormLabel>
-              <CCol sm={9}>
-                <CFormInput type="text" id="inputName" name="name" />
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CFormLabel htmlFor="" className="col-sm-3 col-form-label">
-                Giới tính
-              </CFormLabel>
-              <CCol sm={9}>
-                <CFormCheck
-                  inline
-                  type="radio"
-                  name="gender"
-                  id="inlineCheckbox1"
-                  value="nam"
-                  label="Nam"
-                />
-                <CFormCheck
-                  inline
-                  type="radio"
-                  name="gender"
-                  id="inlineCheckbox2"
-                  value="nữ"
-                  label="Nữ"
-                />
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CFormLabel htmlFor="inputBirthdate" className="col-sm-3 col-form-label">
-                Ngày sinh
-              </CFormLabel>
-              <CCol sm={9}>
-                <CFormInput type="date" id="inputBirthdate" name="birthdate" />
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CFormLabel htmlFor="inputPhone" className="col-sm-3 col-form-label">
-                Điện thoại
-              </CFormLabel>
-              <CCol sm={9}>
-                <CFormInput type="tel" id="inputPhone" name="phone" />
-              </CCol>
-            </CRow>
-            <CRow className="mb-3">
-              <CFormLabel htmlFor="inputEmail" className="col-sm-3 col-form-label">
-                Email
-              </CFormLabel>
-              <CCol sm={9}>
-                <CFormInput type="email" id="inputEmail" name="email" />
-              </CCol>
-            </CRow>
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="secondary" onClick={() => setAddFormVisible(false)}>
-              Đóng
-            </CButton>
-            <CButton color="primary" type="submit">
-              Thêm
-            </CButton>
-          </CModalFooter>
-        </CForm>
+        <Formik
+          initialValues={{
+            famMidName: '',
+            name: '',
+            gender: '',
+            birthdate: '',
+            phone: '',
+            email: '',
+            enrollmentDate: '',
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmitAdd}
+        >
+          {({ errors, touched }) => (
+            <Form as={CForm}>
+              <CModalBody>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="inputFamMidName" className="col-sm-3 col-form-label">
+                    Họ và lót
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormInput}
+                      type="text"
+                      id="inputFamMidName"
+                      name="famMidName"
+                      invalid={!!(touched.famMidName && errors.famMidName)}
+                      feedback={errors.famMidName || ''}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="inputName" className="col-sm-3 col-form-label">
+                    Tên
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormInput}
+                      type="text"
+                      id="inputName"
+                      name="name"
+                      invalid={!!(touched.name && errors.name)}
+                      feedback={errors.name || ''}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="" className="col-sm-3 col-form-label">
+                    Giới tính
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormCheck}
+                      inline
+                      type="radio"
+                      name="gender"
+                      id="inlineCheckbox1"
+                      value="nam"
+                      label="Nam"
+                      invalid={!!(touched.gender && errors.gender)}
+                      feedback={errors.gender || ''}
+                    />
+                    <Field
+                      as={CFormCheck}
+                      inline
+                      type="radio"
+                      name="gender"
+                      id="inlineCheckbox2"
+                      value="nữ"
+                      label="Nữ"
+                    />
+                  </CCol>
+                </CRow>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="inputBirthdate" className="col-sm-3 col-form-label">
+                    Ngày sinh
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormInput}
+                      type="date"
+                      id="inputBirthdate"
+                      name="birthdate"
+                      invalid={!!(touched.birthdate && errors.birthdate)}
+                      feedback={errors.birthdate || ''}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="inputPhone" className="col-sm-3 col-form-label">
+                    Điện thoại
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormInput}
+                      type="tel"
+                      id="inputPhone"
+                      name="phone"
+                      invalid={!!(touched.phone && errors.phone)}
+                      feedback={errors.phone || ''}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="inputEmail" className="col-sm-3 col-form-label">
+                    Email
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormInput}
+                      type="email"
+                      id="inputEmail"
+                      name="email"
+                      invalid={!!(touched.email && errors.email)}
+                      feedback={errors.email || ''}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="inputEmail" className="col-sm-3 col-form-label">
+                    Ngày nhập học
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormInput}
+                      type="date"
+                      id="inputEnrollmentDate"
+                      name="enrollmentDate"
+                      invalid={!!(touched.enrollmentDate && errors.enrollmentDate)}
+                      feedback={errors.enrollmentDate || ''}
+                    />
+                  </CCol>
+                </CRow>
+              </CModalBody>
+              <CModalFooter>
+                <CButton color="secondary" onClick={() => setAddFormVisible(false)}>
+                  Đóng
+                </CButton>
+                <CButton color="primary" type="submit">
+                  Cập nhật
+                </CButton>
+              </CModalFooter>
+            </Form>
+          )}
+        </Formik>
       </CModal>
       <CModal visible={importFormVisible} onClose={() => setImportFormVisible(false)}>
         <CModalHeader>
@@ -411,120 +477,159 @@ const Student = () => {
           <CModalHeader>
             <CModalTitle> Cập nhật thông tin sinh viên</CModalTitle>
           </CModalHeader>
-          <CForm
-            ref={updateFrom}
-            onSubmit={(e) => handleSubmitUpdate(e, selectedStudent.id)}
-            method="POST "
+          <Formik
+            initialValues={{
+              famMidName: selectedStudent.famMidName,
+              name: selectedStudent.name,
+              gender: selectedStudent.gender,
+              birthdate: selectedStudent.birthdate,
+              phone: selectedStudent.phone,
+              email: selectedStudent.email,
+              enrollmentDate: selectedStudent.enrollmentDate,
+            }}
+            validationSchema={validationSchema}
+            onSubmit={(values) => handleSubmitUpdate(values, selectedStudent.id)}
           >
-            <CModalBody>
-              <CRow className="mb-3">
-                <CFormLabel htmlFor="inputCode" className="col-sm-3 col-form-label">
-                  Mã sinh viên
-                </CFormLabel>
-                <CCol sm={9}>
-                  <p>{selectedStudent.code}</p>
-                </CCol>
-              </CRow>
-              <CRow className="mb-3">
-                <CFormLabel htmlFor="inputFamMidName" className="col-sm-3 col-form-label">
-                  Họ và lót
-                </CFormLabel>
-                <CCol sm={9}>
-                  <CFormInput
-                    type="text"
-                    id="inputFamMidName"
-                    name="famMidName"
-                    defaultValue={selectedStudent.famMidName}
-                  />
-                </CCol>
-              </CRow>
-              <CRow className="mb-3">
-                <CFormLabel htmlFor="inputName" className="col-sm-3 col-form-label">
-                  Tên
-                </CFormLabel>
-                <CCol sm={9}>
-                  <CFormInput
-                    type="text"
-                    id="inputName"
-                    name="name"
-                    defaultValue={selectedStudent.name}
-                  />
-                </CCol>
-              </CRow>
-              <CRow className="mb-3">
-                <CFormLabel htmlFor="" className="col-sm-3 col-form-label">
-                  Giới tính
-                </CFormLabel>
-                <CCol sm={9}>
-                  <CFormCheck
-                    inline
-                    type="radio"
-                    name="gender"
-                    id="inlineCheckbox1"
-                    defaultValue="nam"
-                    label="Nam"
-                    defaultChecked={selectedStudent.gender == 'nam'}
-                  />
-                  <CFormCheck
-                    inline
-                    type="radio"
-                    name="gender"
-                    id="inlineCheckbox2"
-                    defaultValue="nữ"
-                    label="Nữ"
-                    defaultChecked={selectedStudent.gender == 'nữ'}
-                  />
-                </CCol>
-              </CRow>
-              <CRow className="mb-3">
-                <CFormLabel htmlFor="inputBirthdate" className="col-sm-3 col-form-label">
-                  Ngày sinh
-                </CFormLabel>
-                <CCol sm={9}>
-                  <CFormInput
-                    type="date"
-                    id="inputBirthdate"
-                    name="birthdate"
-                    defaultValue={selectedStudent.birthdate}
-                  />
-                </CCol>
-              </CRow>
-              <CRow className="mb-3">
-                <CFormLabel htmlFor="inputPhone" className="col-sm-3 col-form-label">
-                  Điện thoại
-                </CFormLabel>
-                <CCol sm={9}>
-                  <CFormInput
-                    type="tel"
-                    id="inputPhone"
-                    name="phone"
-                    defaultValue={selectedStudent.phone}
-                  />
-                </CCol>
-              </CRow>
-              <CRow className="mb-3">
-                <CFormLabel htmlFor="inputEmail" className="col-sm-3 col-form-label">
-                  Email
-                </CFormLabel>
-                <CCol sm={9}>
-                  <CFormInput
-                    type="email"
-                    id="inputEmail"
-                    name="email"
-                    defaultValue={selectedStudent.email}
-                  />
-                </CCol>
-              </CRow>
-            </CModalBody>
-            <CModalFooter>
-              <CButton color="secondary" onClick={() => setSelectedStudent(null)}>
-                Đóng
-              </CButton>
-              <CButton color="primary" type="submit">
-                Cập nhật
-              </CButton>
-            </CModalFooter>
-          </CForm>
+            {({ errors, touched }) => (
+              <Form as={CForm}>
+                <CModalBody>
+                  <CRow className="mb-3">
+                    <CFormLabel htmlFor="inputCode" className="col-sm-3 col-form-label">
+                      Mã sinh viên
+                    </CFormLabel>
+                    <CCol sm={9}>
+                      <p>{selectedStudent.code}</p>
+                    </CCol>
+                  </CRow>
+                  <CRow className="mb-3">
+                    <CFormLabel htmlFor="inputFamMidName" className="col-sm-3 col-form-label">
+                      Họ và lót
+                    </CFormLabel>
+                    <CCol sm={9}>
+                      <Field
+                        as={CFormInput}
+                        type="text"
+                        id="inputFamMidName"
+                        name="famMidName"
+                        invalid={!!(touched.famMidName && errors.famMidName)}
+                        feedback={errors.famMidName || ''}
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow className="mb-3">
+                    <CFormLabel htmlFor="inputName" className="col-sm-3 col-form-label">
+                      Tên
+                    </CFormLabel>
+                    <CCol sm={9}>
+                      <Field
+                        as={CFormInput}
+                        type="text"
+                        id="inputName"
+                        name="name"
+                        invalid={!!(touched.name && errors.name)}
+                        feedback={errors.name || ''}
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow className="mb-3">
+                    <CFormLabel htmlFor="" className="col-sm-3 col-form-label">
+                      Giới tính
+                    </CFormLabel>
+                    <CCol sm={9}>
+                      <Field
+                        as={CFormCheck}
+                        inline
+                        type="radio"
+                        name="gender"
+                        id="inlineCheckbox1"
+                        value="nam"
+                        label="Nam"
+                        invalid={!!(touched.gender && errors.gender)}
+                        feedback={errors.gender || ''}
+                      />
+                      <Field
+                        as={CFormCheck}
+                        inline
+                        type="radio"
+                        name="gender"
+                        id="inlineCheckbox2"
+                        value="nữ"
+                        label="Nữ"
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow className="mb-3">
+                    <CFormLabel htmlFor="inputBirthdate" className="col-sm-3 col-form-label">
+                      Ngày sinh
+                    </CFormLabel>
+                    <CCol sm={9}>
+                      <Field
+                        as={CFormInput}
+                        type="date"
+                        id="inputBirthdate"
+                        name="birthdate"
+                        invalid={!!(touched.birthdate && errors.birthdate)}
+                        feedback={errors.birthdate || ''}
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow className="mb-3">
+                    <CFormLabel htmlFor="inputPhone" className="col-sm-3 col-form-label">
+                      Điện thoại
+                    </CFormLabel>
+                    <CCol sm={9}>
+                      <Field
+                        as={CFormInput}
+                        type="tel"
+                        id="inputPhone"
+                        name="phone"
+                        invalid={!!(touched.phone && errors.phone)}
+                        feedback={errors.phone || ''}
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow className="mb-3">
+                    <CFormLabel htmlFor="inputEmail" className="col-sm-3 col-form-label">
+                      Email
+                    </CFormLabel>
+                    <CCol sm={9}>
+                      <Field
+                        as={CFormInput}
+                        type="email"
+                        id="inputEmail"
+                        name="email"
+                        invalid={!!(touched.email && errors.email)}
+                        feedback={errors.email || ''}
+                      />
+                    </CCol>
+                  </CRow>
+                  <CRow className="mb-3">
+                    <CFormLabel htmlFor="inputEmail" className="col-sm-3 col-form-label">
+                      Ngày nhập học
+                    </CFormLabel>
+                    <CCol sm={9}>
+                      <Field
+                        as={CFormInput}
+                        type="date"
+                        id="inputEnrollmentDate"
+                        name="enrollmentDate"
+                        invalid={!!(touched.enrollmentDate && errors.enrollmentDate)}
+                        feedback={errors.enrollmentDate || ''}
+                      />
+                    </CCol>
+                  </CRow>
+                </CModalBody>
+                <CModalFooter>
+                  <CButton color="secondary" onClick={() => setSelectedStudent(null)}>
+                    Đóng
+                  </CButton>
+                  <CButton color="primary" type="submit">
+                    Cập nhật
+                  </CButton>
+                </CModalFooter>
+              </Form>
+            )}
+          </Formik>
         </CModal>
       )}
     </div>

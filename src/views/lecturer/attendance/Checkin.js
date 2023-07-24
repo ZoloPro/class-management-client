@@ -25,16 +25,34 @@ const Checkin = () => {
   const [checkinVisible, setCheckinVisible] = useState(false);
   const [classroom, setClassroom] = useState(null);
   const [checkinURL, setCheckinURL] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [intervalId, setIntervalId] = useState(null);
-  const [countdownIntervalId, setCountdownIntervalId] = useState(null);
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(0);
 
   const classroomId = useParams().classroomId;
+
+  let timer;
 
   useEffect(() => {
     getClassrooms();
   }, [classroomId]);
+
+  useEffect(() => {
+    let timer;
+
+    if (checkinVisible) {
+      // Start the countdown only if the showButton is true
+      if (countdown === 0) {
+        fetchCheckinUrl();
+      }
+
+      if (countdown > 0) {
+        timer = setInterval(() => {
+          setCountdown((prevCountdown) => prevCountdown - 1);
+        }, 1000);
+      }
+    }
+
+    return () => clearInterval(timer); // Clean up the timer on component unmount or showButton is false
+  }, [countdown, checkinVisible]);
 
   const getClassrooms = () => {
     axiosClient
@@ -55,12 +73,7 @@ const Checkin = () => {
       .then((response) => {
         console.log(response);
         setCheckinURL(response?.data?.data?.url);
-        setCountdown(10);
-        setCountdownIntervalId(
-          setInterval(() => {
-            setCountdown((prevCountdown) => Math.max(prevCountdown - 1, 0));
-          }, 1000),
-        );
+        setCountdown(10); // Reset countdown to 10 seconds on successful API response
       })
       .catch((error) => {
         console.log(error);
@@ -68,20 +81,13 @@ const Checkin = () => {
   };
 
   const handleShowCheckinQR = () => {
-    setCheckinVisible(true);
     fetchCheckinUrl();
-    setIntervalId(
-      setInterval(() => {
-        fetchCheckinUrl();
-        clearInterval(countdownIntervalId);
-      }, 10000),
-    );
+    setCheckinVisible(true);
   };
 
   const handleCloseCheckinQR = () => {
     setCheckinVisible(false);
-    clearInterval(intervalId);
-    clearInterval(countdownIntervalId);
+    clearInterval(timer);
   };
 
   return (
@@ -117,18 +123,18 @@ const Checkin = () => {
             {checkinURL && (
               <QRCodeSVG
                 value={checkinURL}
-                size={450}
+                size={400}
                 imageSettings={{
                   src: oig,
-                  height: 116,
-                  width: 116,
+                  height: 113,
+                  width: 113,
                   excavate: true,
                 }}
               />
             )}
           </CRow>
           <CRow>
-            <CProgress value={countdown * 10}>{`${countdown}s`}</CProgress>
+            <CProgress value={countdown * 10}> {countdown}s </CProgress>
           </CRow>
         </CModalBody>
         <CModalFooter>

@@ -216,13 +216,7 @@ const Document = () => {
                 Chọn file
               </CFormLabel>
               <CCol sm={9}>
-                <CFormInput
-                  type="file"
-                  id="inputFile"
-                  name="file"
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-                  required
-                />
+                <CFormInput type="file" id="inputFile" name="file" accept=".pdf" required />
               </CCol>
             </CRow>
           </CModalBody>

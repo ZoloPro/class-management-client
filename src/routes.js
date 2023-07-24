@@ -26,7 +26,7 @@ const Classroom = React.lazy(() => import('./views/management/classroom/Classroo
 const RegisterClassroom = React.lazy(() =>
   import('./views/management/registerClassroom/RegisterClassroom'),
 );
-
+const AddStudent = React.lazy(() => import('./views/management/registerClassroom/AddStudent'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
@@ -122,6 +122,15 @@ const routes = [
     element: (
       <ProtectedRoute role={'admin'}>
         <RegisterClassroom />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/register-classroom/:classroomId/add',
+    name: 'Add student',
+    element: (
+      <ProtectedRoute role={'admin'}>
+        <AddStudent />
       </ProtectedRoute>
     ),
   },

@@ -19,17 +19,16 @@ import {
 import { useParams } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import oig from 'src/assets/images/OIG.png';
+import { toast } from 'react-toastify';
 
 const Checkin = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [checkinVisible, setCheckinVisible] = useState(false);
   const [classroom, setClassroom] = useState(null);
-  const [checkinURL, setCheckinURL] = useState(null);
+  const [checkinToken, setCheckinToken] = useState(null);
   const [countdown, setCountdown] = useState(0);
 
   const classroomId = useParams().classroomId;
-
-  let timer;
 
   useEffect(() => {
     getClassrooms();
@@ -41,7 +40,7 @@ const Checkin = () => {
     if (checkinVisible) {
       // Start the countdown only if the showButton is true
       if (countdown === 0) {
-        fetchCheckinUrl();
+        fetchCheckinToken();
       }
 
       if (countdown > 0) {
@@ -59,20 +58,21 @@ const Checkin = () => {
       .get('/lecturer/classrooms')
       .then((response) => {
         console.log(response);
-        setClassrooms(response?.data?.data?.classrooms);
-        // Update the countdown timer every second
+        const classrooms = response?.data?.data?.classrooms;
+        setClassroom(classrooms.find((classroom) => classroom.id == classroomId));
+        setClassrooms(classrooms);
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  const fetchCheckinUrl = () => {
+  const fetchCheckinToken = () => {
     axiosClient
       .get(`/lecturer/attendance/${classroomId}`)
       .then((response) => {
         console.log(response);
-        setCheckinURL(response?.data?.data?.url);
+        setCheckinToken(response?.data?.data?.token);
         setCountdown(10); // Reset countdown to 10 seconds on successful API response
       })
       .catch((error) => {
@@ -81,13 +81,29 @@ const Checkin = () => {
   };
 
   const handleShowCheckinQR = () => {
-    fetchCheckinUrl();
-    setCheckinVisible(true);
+    const logToast = toast.loading('Đang tạo mã điểm danh');
+    axiosClient
+      .post(`/lecturer/attendance/${classroomId}`)
+      .then((response) => {
+        console.log(response);
+        setCheckinVisible(true);
+        toast.dismiss(logToast);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.update(logToast, {
+          render: 'Tạo mã điểm danh thất bại',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
   };
 
   const handleCloseCheckinQR = () => {
     setCheckinVisible(false);
-    clearInterval(timer);
+    setCheckinToken(null);
+    setCountdown(0);
   };
 
   return (
@@ -99,7 +115,7 @@ const Checkin = () => {
               <CDropdownToggle color="secondary">Chọn lớp</CDropdownToggle>
               <CDropdownMenu>
                 {classrooms?.map((classroom) => (
-                  <CDropdownItem key={classroom.id} href={`#/attendance/${classroom.id}`}>
+                  <CDropdownItem key={classroom.id} href={`#/checkin/${classroom.id}`}>
                     {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
                   </CDropdownItem>
                 ))}
@@ -107,11 +123,13 @@ const Checkin = () => {
             </CDropdown>
             {classroom && <span>{`Lớp: ${classroom.term.termName} (mã lớp ${classroomId})`}</span>}
           </CCol>
-          <CCol className="d-flex justify-content-end gap-3">
-            <button type="button" className="btn btn-success" onClick={handleShowCheckinQR}>
-              Hiện QR điểm danh
-            </button>
-          </CCol>
+          {classroom && (
+            <CCol className="d-flex justify-content-end gap-3">
+              <button type="button" className="btn btn-success" onClick={handleShowCheckinQR}>
+                Hiện QR điểm danh
+              </button>
+            </CCol>
+          )}
         </CRow>
       </CCard>
       <CModal visible={checkinVisible} onClose={handleCloseCheckinQR}>
@@ -120,20 +138,20 @@ const Checkin = () => {
         </CModalHeader>
         <CModalBody>
           <CRow>
-            {checkinURL && (
+            {checkinToken && (
               <QRCodeSVG
-                value={checkinURL}
+                value={checkinToken}
                 size={400}
                 imageSettings={{
                   src: oig,
-                  height: 113,
-                  width: 113,
+                  height: 70,
+                  width: 70,
                   excavate: true,
                 }}
               />
             )}
           </CRow>
-          <CRow>
+          <CRow className="my-2">
             <CProgress value={countdown * 10}> {countdown}s </CProgress>
           </CRow>
         </CModalBody>

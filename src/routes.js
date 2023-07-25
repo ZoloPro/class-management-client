@@ -14,7 +14,7 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 
 //My custom
 const Attendance = React.lazy(() => import('./views/lecturer/attendance/Checkin'));
-const Mark = React.lazy(() => import('./views/lecturer/mark/mark'));
+const Grade = React.lazy(() => import('./views/lecturer/grade/Grade'));
 const Document = React.lazy(() => import('./views/lecturer/document/Document'));
 const Checkin = React.lazy(() => import('./views/lecturer/attendance/Checkin'));
 const Password = React.lazy(() => import('./views/lecturer/password/Password'));
@@ -41,13 +41,21 @@ const routes = [
 
   //My lecturer route
   { path: '/attendance', name: 'Attendance', element: Attendance },
-  { path: '/mark', name: 'Mark', element: Mark },
   {
-    path: '/mark/:classroomId',
-    name: 'Mark',
+    path: '/grade',
+    name: 'Grade',
     element: (
       <ProtectedRoute role={'lecturer'}>
-        <Mark />
+        <Grade />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/grade/:classroomId',
+    name: 'Grade',
+    element: (
+      <ProtectedRoute role={'lecturer'}>
+        <Grade />
       </ProtectedRoute>
     ),
   },
@@ -57,6 +65,15 @@ const routes = [
     element: (
       <ProtectedRoute role={'lecturer'}>
         <Document />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/checkin',
+    name: 'Check-in',
+    element: (
+      <ProtectedRoute role={'lecturer'}>
+        <Checkin />
       </ProtectedRoute>
     ),
   },

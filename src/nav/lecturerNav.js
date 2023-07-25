@@ -21,17 +21,17 @@ const adminNav = [
   {
     component: CNavItem,
     name: 'Điểm danh',
-    to: '/attendance',
-  },
-  {
-    component: CNavItem,
-    name: 'Điểm danh',
     to: '/checkin',
   },
   {
     component: CNavItem,
+    name: 'Lịch sử điểm danh',
+    to: '/attendance',
+  },
+  {
+    component: CNavItem,
     name: 'Nhập điểm',
-    to: '/mark',
+    to: '/grade',
   },
   {
     component: CNavItem,

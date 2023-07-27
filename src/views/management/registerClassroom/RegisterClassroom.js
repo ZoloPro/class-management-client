@@ -51,6 +51,7 @@ const RegisterClassroom = () => {
   }, [classroomId]);
 
   const getClassrooms = () => {
+    setLoading(true);
     axiosClient
       .get('/admin/classrooms')
       .then((response) => {

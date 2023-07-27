@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axiosClient from '../../../axios/axios-client';
 import { useParams } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -30,7 +30,6 @@ const Grade = () => {
   const [classroomLoading, setClassroomLoading] = useState(true);
 
   let classroomId = useParams().classroomId;
-  console.log(classroomId);
 
   useEffect(() => {
     if (classroomId) {
@@ -72,7 +71,10 @@ const Grade = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    grade: Yup.number().min(0, 'Điểm không được nhỏ hơn 0').max(10, 'Điểm không được lớn hơn 10'),
+    grade: Yup.number('Điểm không hợp lệ')
+      .nullable()
+      .min(0, 'Điểm không hợp lệ')
+      .max(10, 'Điểm không hợp lệ'),
   });
 
   const handleCellChange = (event, id, field) => {
@@ -80,7 +82,7 @@ const Grade = () => {
       if (grade.id == id) {
         return {
           ...grade,
-          [field]: event.target.value,
+          grade: { ...grade.grade, [field]: event.target.value },
         };
       }
       return grade;
@@ -89,14 +91,30 @@ const Grade = () => {
     setIsSaved(false);
   };
 
+  const validateCell = (event, id, field) => {
+    validationSchema
+      .validate({ grade: event.target.value === '' ? null : event.target.value })
+      .then((response) => {
+        console.log(response);
+        handleCellChange(event, id, field);
+        event.target.style.color = '';
+      })
+      .catch((error) => {
+        console.log(error);
+        event.target.style.color = 'red';
+      });
+  };
+
   const handleSave = () => {
     const saveToast = toast.loading('Đang lưu');
+    console.log(grades);
     axiosClient
       .put(`/lecturer/grades/${classroomId}`, {
         grades: grades.map((grade) => {
           return {
             studentId: grade.id,
-            grade: grade.grade,
+            attendanceGrade: grade.grade.attendanceGrade,
+            examGrade: grade.grade.examGrade,
           };
         }),
       })
@@ -163,20 +181,26 @@ const Grade = () => {
           <CTable bordered>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell scope="col" width={'10%'}>
+                <CTableHeaderCell scope="col" width={'5%'}>
                   #
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'20%'}>
+                <CTableHeaderCell scope="col" width={'10%'}>
                   Mã sinh viên
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'30%'}>
+                <CTableHeaderCell scope="col" width={'20%'}>
                   Họ và lót
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'30%'}>
+                <CTableHeaderCell scope="col" width={'20%'}>
                   Tên
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'10%'}>
-                  Điểm
+                <CTableHeaderCell scope="col" width={'15%'}>
+                  Điểm chuyên cần
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" width={'15%'}>
+                  Điểm kiểm tra
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" width={'15%'}>
+                  Điểm quá trình
                 </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
@@ -190,10 +214,23 @@ const Grade = () => {
                   <CTableDataCell>
                     <input
                       type="text"
-                      defaultValue={grade.grade + '' ? grade.grade : ''}
+                      defaultValue={
+                        grade.grade.attendanceGrade != null ? grade.grade.attendanceGrade : ''
+                      }
                       className={'editable-cell text-center'}
-                      onChange={(event) => handleCellChange(event, grade.id, 'grade')}
+                      onChange={(event) => validateCell(event, grade.id, 'attendanceGrade')}
                     />
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <input
+                      type="text"
+                      defaultValue={grade.grade.examGrade != null ? grade.grade.examGrade : ''}
+                      className={'editable-cell text-center'}
+                      onChange={(event) => validateCell(event, grade.id, 'examGrade', index)}
+                    />
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    {grade.grade.finalGrade != null ? grade.grade.finalGrade : ''}
                   </CTableDataCell>
                 </CTableRow>
               ))}

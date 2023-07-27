@@ -69,7 +69,7 @@ const Checkin = () => {
 
   const fetchCheckinToken = () => {
     axiosClient
-      .get(`/lecturer/attendance/${classroomId}`)
+      .get(`/lecturer/checkin/${classroomId}`)
       .then((response) => {
         console.log(response);
         setCheckinToken(response?.data?.data?.token);
@@ -83,7 +83,7 @@ const Checkin = () => {
   const handleShowCheckinQR = () => {
     const logToast = toast.loading('Đang tạo mã điểm danh');
     axiosClient
-      .post(`/lecturer/attendance/${classroomId}`)
+      .post(`/lecturer/checkin/${classroomId}`)
       .then((response) => {
         console.log(response);
         setCheckinVisible(true);

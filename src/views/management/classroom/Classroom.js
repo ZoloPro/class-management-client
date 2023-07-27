@@ -219,7 +219,7 @@ const Classroom = () => {
             </CRow>
             <CRow className="mb-3">
               <CFormLabel htmlFor="inputTerm" className="col-sm-3 col-form-label">
-                Số tín chỉ
+                Chọn học phần
               </CFormLabel>
               <CCol sm={9}>
                 {

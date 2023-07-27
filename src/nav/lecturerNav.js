@@ -26,7 +26,7 @@ const adminNav = [
   {
     component: CNavItem,
     name: 'Lịch sử điểm danh',
-    to: '/attendance',
+    to: '/checkin-history',
   },
   {
     component: CNavItem,

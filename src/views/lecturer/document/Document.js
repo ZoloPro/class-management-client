@@ -36,13 +36,19 @@ const Document = () => {
   const [addFormVisible, setAddFormVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [classroom, setClassroom] = useState(null);
+  const [classroomLoading, setClassroomLoading] = useState(true);
 
   const addFrom = useRef();
 
   const classroomId = useParams().classroomId;
 
   useEffect(() => {
-    getDocuments();
+    if (classroomId) {
+      getDocuments();
+    } else {
+      setLoading(false);
+      setDocuments([]);
+    }
     getClassrooms();
   }, [classroomId]);
   const getDocuments = () => {
@@ -69,6 +75,7 @@ const Document = () => {
       .then((response) => {
         console.log(response);
         setClassrooms(response?.data?.data?.classrooms);
+        setClassroomLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -146,28 +153,34 @@ const Document = () => {
             <CDropdown>
               <CDropdownToggle color="secondary">Chọn lớp</CDropdownToggle>
               <CDropdownMenu>
-                {classrooms?.map((classroom) => (
-                  <CDropdownItem
-                    key={classroom.id}
-                    href={`#/document/${classroom.id}`}
-                    onClick={() => setLoading(true)}
-                  >
-                    {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
-                  </CDropdownItem>
-                ))}
+                {classroomLoading ? (
+                  <CSpinner />
+                ) : (
+                  classrooms?.map((classroom) => (
+                    <CDropdownItem
+                      key={classroom.id}
+                      href={`#/document/${classroom.id}`}
+                      onClick={() => setLoading(true)}
+                    >
+                      {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
+                    </CDropdownItem>
+                  ))
+                )}
               </CDropdownMenu>
             </CDropdown>
             {classroom && <span>{`Lớp: ${classroom.term.termName} (mã lớp ${classroomId})`}</span>}
           </CCol>
-          <CCol className="d-flex justify-content-end gap-3">
-            <button
-              type="button"
-              className="btn btn-success"
-              onClick={() => setAddFormVisible(!addFormVisible)}
-            >
-              Thêm
-            </button>
-          </CCol>
+          {classroomId && (
+            <CCol className="d-flex justify-content-end gap-3">
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={() => setAddFormVisible(!addFormVisible)}
+              >
+                Thêm
+              </button>
+            </CCol>
+          )}
         </CRow>
         <div className={'m-2'}>
           {loading ? (

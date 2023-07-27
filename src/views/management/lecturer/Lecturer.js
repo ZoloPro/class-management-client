@@ -268,7 +268,6 @@ const Lecturer = () => {
                   </CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
-
               <CTableBody>
                 {lectures.map((lecturer, index) => (
                   <CTableRow key={lecturer.code}>

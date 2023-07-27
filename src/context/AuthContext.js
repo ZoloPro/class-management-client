@@ -37,7 +37,13 @@ export const AuthProvider = ({ children }) => {
     navigate(userRole === 'admin' ? 'admin/login' : '/login');
   };
 
-  const isAuthenticated = !!token;
+  const isAuthenticated = () => {
+    if (!token) {
+      logout();
+      return false;
+    }
+    return true;
+  };
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, token, userRole, user, login, logout }}>

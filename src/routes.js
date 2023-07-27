@@ -1,5 +1,6 @@
 import React from 'react';
 import ProtectedRoute from './route/ProtectedRoute';
+import { Navigate } from 'react-router-dom';
 
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'));
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'));
@@ -13,10 +14,10 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'));
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 
 //My custom
-const Attendance = React.lazy(() => import('./views/lecturer/attendance/Checkin'));
 const Grade = React.lazy(() => import('./views/lecturer/grade/Grade'));
 const Document = React.lazy(() => import('./views/lecturer/document/Document'));
-const Checkin = React.lazy(() => import('./views/lecturer/attendance/Checkin'));
+const Checkin = React.lazy(() => import('./views/lecturer/checkin/Checkin'));
+const CheckinHistory = React.lazy(() => import('./views/lecturer/checkin/CheckinHistory'));
 const Password = React.lazy(() => import('./views/lecturer/password/Password'));
 
 const Lecturer = React.lazy(() => import('./views/management/lecturer/Lecturer'));
@@ -40,7 +41,24 @@ const routes = [
   { path: '/widgets', name: 'Widgets', element: Widgets },
 
   //My lecturer route
-  { path: '/attendance', name: 'Attendance', element: Attendance },
+  {
+    path: '/checkin-history',
+    name: 'Check in history',
+    element: (
+      <ProtectedRoute role={'lecturer'}>
+        <CheckinHistory />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/checkin-history/:classroomId',
+    name: 'Check in history',
+    element: (
+      <ProtectedRoute role={'lecturer'}>
+        <CheckinHistory />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: '/grade',
     name: 'Grade',
@@ -56,6 +74,15 @@ const routes = [
     element: (
       <ProtectedRoute role={'lecturer'}>
         <Grade />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/document',
+    name: 'Document',
+    element: (
+      <ProtectedRoute role={'lecturer'}>
+        <Document />
       </ProtectedRoute>
     ),
   },
@@ -97,6 +124,11 @@ const routes = [
   },
 
   //My admin route
+  {
+    path: '/admin',
+    name: 'lecturer',
+    element: <ProtectedRoute role={'admin'}></ProtectedRoute>,
+  },
   {
     path: '/admin/lecturer',
     name: 'lecturer',
@@ -150,6 +182,11 @@ const routes = [
         <AddStudent />
       </ProtectedRoute>
     ),
+  },
+  {
+    path: '*',
+    name: 'Page 404',
+    element: <Navigate to="404" replace />,
   },
 ];
 

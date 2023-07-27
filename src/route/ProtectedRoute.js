@@ -5,7 +5,7 @@ import useAuth from '../auth/useAuth';
 const ProtectedRoute = ({ role, children }) => {
   const { isAuthenticated, userRole } = useAuth();
 
-  return isAuthenticated && userRole === role ? (
+  return isAuthenticated() && userRole === role ? (
     children
   ) : (
     <Navigate to={`${role === 'admin' ? '/admin/login' : '/login'}`} />

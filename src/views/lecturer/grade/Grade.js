@@ -180,7 +180,7 @@ const Grade = () => {
                   <CTableDataCell>
                     <input
                       type="text"
-                      defaultValue={grade.grade ? grade.grade : ''}
+                      defaultValue={grade.grade + '' ? grade.grade : ''}
                       className={'editable-cell text-center'}
                       onChange={(event) => handleCellChange(event, grade.id, 'grade')}
                     />

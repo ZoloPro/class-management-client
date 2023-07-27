@@ -26,6 +26,7 @@ const Grade = () => {
   const [loading, setLoading] = useState(true);
   const [isSaved, setIsSaved] = useState(true);
   const [classroom, setClassroom] = useState(null);
+  const [classroomLoading, setClassroomLoading] = useState(true);
 
   let classroomId = useParams().classroomId;
   console.log(classroomId);
@@ -38,7 +39,6 @@ const Grade = () => {
       setGrades([]);
       setLoading(false);
     }
-
     getClassrooms();
   }, [classroomId]);
 
@@ -49,6 +49,7 @@ const Grade = () => {
         const classrooms = response?.data?.data?.classrooms;
         setClassroom(classrooms.find((classroom) => classroom.id == classroomId));
         setClassrooms(classrooms);
+        setClassroomLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -123,11 +124,15 @@ const Grade = () => {
           <CDropdown>
             <CDropdownToggle color="secondary">Chọn lớp</CDropdownToggle>
             <CDropdownMenu>
-              {classrooms?.map((classroom) => (
-                <CDropdownItem key={classroom.id} href={`#/grade/${classroom.id}`}>
-                  {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
-                </CDropdownItem>
-              ))}
+              {classroomLoading ? (
+                <CSpinner />
+              ) : (
+                classrooms?.map((classroom) => (
+                  <CDropdownItem key={classroom.id} href={`#/grade/${classroom.id}`}>
+                    {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
+                  </CDropdownItem>
+                ))
+              )}
             </CDropdownMenu>
           </CDropdown>
           {classroom && <span>{`Lớp: ${classroom.term.termName} (mã lớp ${classroomId})`}</span>}

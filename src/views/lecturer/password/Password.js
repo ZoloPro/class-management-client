@@ -13,7 +13,14 @@ const Checkin = () => {
 
   const validationSchema = Yup.object().shape({
     oldPassword: Yup.string().required('Vui lòng nhập mật khẩu hiện tại'),
-    newPassword: Yup.string().required('Vui lòng nhập mật khẩu mới'),
+    newPassword: Yup.string()
+      .required('Vui lòng nhập mật khẩu mới')
+      .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
+      .max(20, 'Mật khẩu không được vượt quá 20 ký tự')
+      .matches(
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+])[0-9a-zA-Z!@#$%^&*()_+]+$/,
+        'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt',
+      ),
     confirmPassword: Yup.string()
       .required('Vui lòng nhập lại mật khẩu mới')
       .oneOf([Yup.ref('newPassword'), null], 'Mật khẩu mới không khớp'),

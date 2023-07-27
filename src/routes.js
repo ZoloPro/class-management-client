@@ -2,17 +2,6 @@ import React from 'react';
 import ProtectedRoute from './route/ProtectedRoute';
 import { Navigate } from 'react-router-dom';
 
-const Colors = React.lazy(() => import('./views/theme/colors/Colors'));
-const Typography = React.lazy(() => import('./views/theme/typography/Typography'));
-
-// Notifications
-const Alerts = React.lazy(() => import('./views/notifications/alerts/Alerts'));
-const Badges = React.lazy(() => import('./views/notifications/badges/Badges'));
-const Modals = React.lazy(() => import('./views/notifications/modals/Modals'));
-const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'));
-
-const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
-
 //My custom
 const Grade = React.lazy(() => import('./views/lecturer/grade/Grade'));
 const Document = React.lazy(() => import('./views/lecturer/document/Document'));
@@ -30,15 +19,6 @@ const RegisterClassroom = React.lazy(() =>
 const AddStudent = React.lazy(() => import('./views/management/registerClassroom/AddStudent'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/theme', name: 'Theme', element: Colors, exact: true },
-  { path: '/theme/colors', name: 'Colors', element: Colors },
-  { path: '/theme/typography', name: 'Typography', element: Typography },
-  { path: '/notifications', name: 'Notifications', element: Alerts, exact: true },
-  { path: '/notifications/alerts', name: 'Alerts', element: Alerts },
-  { path: '/notifications/badges', name: 'Badges', element: Badges },
-  { path: '/notifications/modals', name: 'Modals', element: Modals },
-  { path: '/notifications/toasts', name: 'Toasts', element: Toasts },
-  { path: '/widgets', name: 'Widgets', element: Widgets },
 
   //My lecturer route
   {

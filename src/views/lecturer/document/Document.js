@@ -186,35 +186,37 @@ const Document = () => {
           {loading ? (
             <CSpinner />
           ) : (
-            <CTable bordered>
-              <CTableHead>
-                <CTableRow>
-                  <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Mã tài liệu</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Tên tài liệu</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Thao tác</CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
-              <CTableBody>
-                {documents.map((document, index) => (
-                  <CTableRow key={document.id}>
-                    <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                    <CTableDataCell>{document.id}</CTableDataCell>
-                    <CTableDataCell>{document.fileName}</CTableDataCell>
-                    <CTableDataCell>
-                      <a href={document.url} target="_blank" rel="noopener noreferrer">
-                        <CButton color="primary">
-                          <CIcon icon={cilDataTransferDown} />
-                        </CButton>
-                      </a>
-                      <CButton color="danger" onClick={() => handleDeleteDocument(document)}>
-                        <CIcon icon={cilTrash} />
-                      </CButton>
-                    </CTableDataCell>
+            <div className="table-responsive">
+              <CTable bordered>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Mã tài liệu</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Tên tài liệu</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Thao tác</CTableHeaderCell>
                   </CTableRow>
-                ))}
-              </CTableBody>
-            </CTable>
+                </CTableHead>
+                <CTableBody>
+                  {documents.map((document, index) => (
+                    <CTableRow key={document.id}>
+                      <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                      <CTableDataCell>{document.id}</CTableDataCell>
+                      <CTableDataCell>{document.fileName}</CTableDataCell>
+                      <CTableDataCell>
+                        <a href={document.url} target="_blank" rel="noopener noreferrer">
+                          <CButton color="primary">
+                            <CIcon icon={cilDataTransferDown} />
+                          </CButton>
+                        </a>
+                        <CButton color="danger" onClick={() => handleDeleteDocument(document)}>
+                          <CIcon icon={cilTrash} />
+                        </CButton>
+                      </CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            </div>
           )}
         </div>
       </CCard>

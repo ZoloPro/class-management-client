@@ -15,6 +15,7 @@ import {
   CDropdownMenu,
   CDropdownItem,
   CProgress,
+  CSpinner,
 } from '@coreui/react';
 import { useParams } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
@@ -27,6 +28,7 @@ const Checkin = () => {
   const [classroom, setClassroom] = useState(null);
   const [checkinToken, setCheckinToken] = useState(null);
   const [countdown, setCountdown] = useState(0);
+  const [classroomLoading, setClassroomLoading] = useState(true);
 
   const classroomId = useParams().classroomId;
 
@@ -61,6 +63,7 @@ const Checkin = () => {
         const classrooms = response?.data?.data?.classrooms;
         setClassroom(classrooms.find((classroom) => classroom.id == classroomId));
         setClassrooms(classrooms);
+        setClassroomLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -114,11 +117,15 @@ const Checkin = () => {
             <CDropdown>
               <CDropdownToggle color="secondary">Chọn lớp</CDropdownToggle>
               <CDropdownMenu>
-                {classrooms?.map((classroom) => (
-                  <CDropdownItem key={classroom.id} href={`#/checkin/${classroom.id}`}>
-                    {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
-                  </CDropdownItem>
-                ))}
+                {classroomLoading ? (
+                  <CSpinner />
+                ) : (
+                  classrooms?.map((classroom) => (
+                    <CDropdownItem key={classroom.id} href={`#/checkin/${classroom.id}`}>
+                      {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
+                    </CDropdownItem>
+                  ))
+                )}
               </CDropdownMenu>
             </CDropdown>
             {classroom && <span>{`Lớp: ${classroom.term.termName} (mã lớp ${classroomId})`}</span>}

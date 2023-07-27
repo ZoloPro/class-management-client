@@ -140,7 +140,7 @@ const CheckinHistory = () => {
                   <CTableDataCell>{checkin.famMidName}</CTableDataCell>
                   <CTableDataCell>{checkin.name}</CTableDataCell>
                   {checkin?.checkedIn?.map((item, index) => (
-                    <CTableDataCell key={index}>{item.isChecked ? 'v' : 'x'}</CTableDataCell>
+                    <CTableDataCell key={index}>{item.isChecked ? 'v' : ''}</CTableDataCell>
                   ))}
                 </CTableRow>
               ))}

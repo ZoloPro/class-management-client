@@ -24,7 +24,7 @@ const AppHeader = () => {
   const dispatch = useDispatch();
   const sidebarShow = useSelector((state) => state.sidebarShow);
 
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
 
   return (
     <CHeader position="sticky" className="mb-4">
@@ -44,12 +44,11 @@ const AppHeader = () => {
               Dashboard
             </CNavLink>
           </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">Users</CNavLink>
-          </CNavItem>
-          <CNavItem>
-            <CNavLink href="#">Settings</CNavLink>
-          </CNavItem>
+          {userRole == 'lecturer' && (
+            <CNavItem>
+              <CNavLink href="#/password">Đổi mật khẩu</CNavLink>
+            </CNavItem>
+          )}
         </CHeaderNav>
         <CHeaderNav>
           <span className="bg-info text-white py-2 px-4 rounded-pill">{user?.name}</span>

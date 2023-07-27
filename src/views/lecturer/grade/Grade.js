@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axiosClient from '../../../axios/axios-client';
 import { useParams } from 'react-router-dom';
+import * as Yup from 'yup';
 import {
   CTable,
   CTableBody,
@@ -69,6 +70,10 @@ const Grade = () => {
         console.log(error);
       });
   };
+
+  const validationSchema = Yup.object().shape({
+    grade: Yup.number().min(0, 'Điểm không được nhỏ hơn 0').max(10, 'Điểm không được lớn hơn 10'),
+  });
 
   const handleCellChange = (event, id, field) => {
     const newGrades = grades.map((grade) => {

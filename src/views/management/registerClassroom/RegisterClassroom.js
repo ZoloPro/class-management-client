@@ -35,13 +35,18 @@ const RegisterClassroom = () => {
   const [classroom, setClassroom] = useState(null); //Thông tin lớp học hiện tại
   const [studentList, setStudentList] = useState([]); //Toàn bộ danh sách sinh viên theo mã lớp
   const [loading, setLoading] = useState(true);
+  const [classroomLoading, setClassroomLoading] = useState(true);
 
   const classroomId = useParams().classroomId;
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    getStudentList(); //Lấy toàn bộ danh sách sinh viên theo mã lớp
+    if (classroomId) {
+      getStudentList(); //Lấy toàn bộ danh sách sinh viên theo mã lớp
+    } else {
+      setLoading(false);
+    }
     getClassrooms();
   }, [classroomId]);
 
@@ -50,6 +55,7 @@ const RegisterClassroom = () => {
       .get('/admin/classrooms')
       .then((response) => {
         setClassrooms(response?.data?.data?.classrooms);
+        setClassroomLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -82,14 +88,18 @@ const RegisterClassroom = () => {
             <CDropdown>
               <CDropdownToggle color="secondary">Chọn lớp</CDropdownToggle>
               <CDropdownMenu>
-                {classrooms?.map((classroom) => (
-                  <CDropdownItem
-                    key={classroom.id}
-                    href={`#/admin/register-classroom/${classroom.id}`}
-                  >
-                    {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
-                  </CDropdownItem>
-                ))}
+                {classroomLoading ? (
+                  <CSpinner />
+                ) : (
+                  classrooms?.map((classroom) => (
+                    <CDropdownItem
+                      key={classroom.id}
+                      href={`#/admin/register-classroom/${classroom.id}`}
+                    >
+                      {`${classroom.term.termName} (mã lớp: ${classroom.id})`}
+                    </CDropdownItem>
+                  ))
+                )}
               </CDropdownMenu>
             </CDropdown>
             {classroom && <span>{`Lớp: ${classroom.term.termName} (mã lớp ${classroomId})`}</span>}

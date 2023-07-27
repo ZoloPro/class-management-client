@@ -146,6 +146,15 @@ const routes = [
     ),
   },
   {
+    path: '/admin/register-classroom',
+    name: 'register classroom',
+    element: (
+      <ProtectedRoute role={'admin'}>
+        <RegisterClassroom />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/admin/register-classroom/:classroomId',
     name: 'register classroom',
     element: (

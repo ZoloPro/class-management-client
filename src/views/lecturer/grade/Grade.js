@@ -108,16 +108,11 @@ const Grade = () => {
   const handleSave = () => {
     const saveToast = toast.loading('Đang lưu');
     console.log(grades);
+    for (let key in grades) {
+      delete grades[key].grade.final;
+    }
     axiosClient
-      .put(`/lecturer/grades/${classroomId}`, {
-        grades: grades.map((grade) => {
-          return {
-            studentId: grade.id,
-            attendanceGrade: grade.grade.attendanceGrade,
-            examGrade: grade.grade.examGrade,
-          };
-        }),
-      })
+      .put(`/lecturer/grades/${classroomId}`, { gradeList: grades })
       .then((response) => {
         console.log(response);
         setIsSaved(true);
@@ -178,29 +173,52 @@ const Grade = () => {
         {loading ? (
           <CSpinner />
         ) : (
-          <CTable bordered>
+          <CTable responsive bordered>
             <CTableHead>
               <CTableRow>
-                <CTableHeaderCell scope="col" width={'5%'}>
+                <CTableHeaderCell scope="col" rowSpan={2} width="30px">
                   #
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'10%'}>
+                <CTableHeaderCell scope="col" rowSpan={2} width="30px">
                   Mã sinh viên
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'20%'}>
+                <CTableHeaderCell scope="col" rowSpan={2} width="150px">
                   Họ và lót
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'20%'}>
+                <CTableHeaderCell scope="col" rowSpan={2} width="100px">
                   Tên
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'15%'}>
+                <CTableHeaderCell scope="col" rowSpan={2} width="50px">
                   Điểm chuyên cần
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'15%'}>
-                  Điểm kiểm tra
+                <CTableHeaderCell scope="col" colSpan={3} className="text-center">
+                  Điểm hệ số 1
                 </CTableHeaderCell>
-                <CTableHeaderCell scope="col" width={'15%'}>
-                  Điểm quá trình
+                <CTableHeaderCell scope="col" colSpan={2} className="text-center">
+                  Điểm hệ số 2
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" rowSpan={2} width="50px">
+                  Điểm thi
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" rowSpan={2} width="50px">
+                  Điểm trung bình
+                </CTableHeaderCell>
+              </CTableRow>
+              <CTableRow>
+                <CTableHeaderCell scope="col" width="50px">
+                  Điểm 1
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" width="50px">
+                  Điểm 2
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" width="50px">
+                  Điểm 3
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" width="50px">
+                  Điểm 1
+                </CTableHeaderCell>
+                <CTableHeaderCell scope="col" width="50px">
+                  Điểm 2
                 </CTableHeaderCell>
               </CTableRow>
             </CTableHead>
@@ -214,23 +232,81 @@ const Grade = () => {
                   <CTableDataCell>
                     <input
                       type="text"
-                      defaultValue={
-                        grade.grade.attendanceGrade != null ? grade.grade.attendanceGrade : ''
-                      }
+                      defaultValue={grade.grade.attendance != null ? grade.grade.attendance : ''}
                       className={'editable-cell text-center'}
-                      onChange={(event) => validateCell(event, grade.id, 'attendanceGrade')}
+                      onChange={(event) => validateCell(event, grade.id, 'attendance')}
                     />
                   </CTableDataCell>
                   <CTableDataCell>
                     <input
                       type="text"
-                      defaultValue={grade.grade.examGrade != null ? grade.grade.examGrade : ''}
+                      defaultValue={
+                        grade.grade.coefficient1Exam1 != null ? grade.grade.coefficient1Exam1 : ''
+                      }
                       className={'editable-cell text-center'}
-                      onChange={(event) => validateCell(event, grade.id, 'examGrade', index)}
+                      onChange={(event) =>
+                        validateCell(event, grade.id, 'coefficient1Exam1', index)
+                      }
                     />
                   </CTableDataCell>
                   <CTableDataCell>
-                    {grade.grade.finalGrade != null ? grade.grade.finalGrade : ''}
+                    <input
+                      type="text"
+                      defaultValue={
+                        grade.grade.coefficient1Exam2 != null ? grade.grade.coefficient1Exam2 : ''
+                      }
+                      className={'editable-cell text-center'}
+                      onChange={(event) =>
+                        validateCell(event, grade.id, 'coefficient1Exam2', index)
+                      }
+                    />
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <input
+                      type="text"
+                      defaultValue={
+                        grade.grade.coefficient1Exam3 != null ? grade.grade.coefficient1Exam3 : ''
+                      }
+                      className={'editable-cell text-center'}
+                      onChange={(event) =>
+                        validateCell(event, grade.id, 'coefficient1Exam3', index)
+                      }
+                    />
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <input
+                      type="text"
+                      defaultValue={
+                        grade.grade.coefficient2Exam1 != null ? grade.grade.coefficient2Exam1 : ''
+                      }
+                      className={'editable-cell text-center'}
+                      onChange={(event) =>
+                        validateCell(event, grade.id, 'coefficient2Exam1', index)
+                      }
+                    />
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <input
+                      type="text"
+                      defaultValue={
+                        grade.grade.coefficient2Exam2 != null ? grade.grade.coefficient2Exam2 : ''
+                      }
+                      className={'editable-cell text-center'}
+                      onChange={(event) =>
+                        validateCell(event, grade.id, 'coefficient2Exam2', index)
+                      }
+                    />
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    <input
+                      type="text"
+                      defaultValue={grade.grade.exam != null ? grade.grade.exam : ''}
+                      className={'editable-cell text-center'}
+                      onChange={(event) => validateCell(event, grade.id, 'exam', index)}
+                    />
+                  </CTableDataCell>
+                  <CTableDataCell>
+                    {grade.grade.final != null ? grade.grade.final : ''}
                   </CTableDataCell>
                 </CTableRow>
               ))}

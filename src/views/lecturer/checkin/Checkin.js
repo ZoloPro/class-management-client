@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axiosClient from '../../../axios/axios-client';
 import {
   CCard,
@@ -31,6 +31,8 @@ const Checkin = () => {
   const [classroomLoading, setClassroomLoading] = useState(true);
 
   const classroomId = useParams().classroomId;
+
+  const type = useRef('');
 
   useEffect(() => {
     getClassrooms();
@@ -72,7 +74,7 @@ const Checkin = () => {
 
   const fetchCheckinToken = () => {
     axiosClient
-      .get(`/lecturer/checkin/${classroomId}`)
+      .get(`/lecturer/checkin/${classroomId}?type=${type.current}`)
       .then((response) => {
         console.log(response);
         setCheckinToken(response?.data?.data?.token);
@@ -83,12 +85,13 @@ const Checkin = () => {
       });
   };
 
-  const handleShowCheckinQR = () => {
+  const handleShowCheckinQR = (QRType) => {
     const logToast = toast.loading('Đang tạo mã điểm danh');
     axiosClient
       .post(`/lecturer/checkin/${classroomId}`)
       .then((response) => {
         console.log(response);
+        type.current = QRType;
         setCheckinVisible(true);
         toast.dismiss(logToast);
       })
@@ -132,8 +135,26 @@ const Checkin = () => {
           </CCol>
           {classroom && (
             <CCol className="d-flex justify-content-end gap-3">
-              <button type="button" className="btn btn-success" onClick={handleShowCheckinQR}>
-                Hiện QR điểm danh
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={() => handleShowCheckinQR(1)}
+              >
+                Điểm danh đầu giờ
+              </button>
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={() => handleShowCheckinQR(2)}
+              >
+                Điểm danh giữa giờ
+              </button>
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={() => handleShowCheckinQR(3)}
+              >
+                Điểm danh cuối giờ
               </button>
             </CCol>
           )}
@@ -158,8 +179,10 @@ const Checkin = () => {
               />
             )}
           </CRow>
-          <CRow className="my-2">
-            <CProgress value={countdown * 10}> {countdown}s </CProgress>
+          <CRow className="my-2 px-4">
+            <CProgress value={countdown * 10} className="p-0">
+              {countdown}s
+            </CProgress>
           </CRow>
         </CModalBody>
         <CModalFooter>

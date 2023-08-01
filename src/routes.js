@@ -17,6 +17,7 @@ const RegisterClassroom = React.lazy(() =>
   import('./views/management/registerClassroom/RegisterClassroom'),
 );
 const AddStudent = React.lazy(() => import('./views/management/registerClassroom/AddStudent'));
+const WifiInfo = React.lazy(() => import('./views/management/wifiInfo/WifiInfo'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
 
@@ -169,6 +170,15 @@ const routes = [
     element: (
       <ProtectedRoute role={'admin'}>
         <AddStudent />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/wifi-info',
+    name: 'Wifi infomation',
+    element: (
+      <ProtectedRoute role={'admin'}>
+        <WifiInfo />
       </ProtectedRoute>
     ),
   },

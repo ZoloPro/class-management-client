@@ -18,7 +18,6 @@ import {
   CButton,
   CRow,
 } from '@coreui/react';
-import { toast } from 'react-toastify';
 
 const CheckinHistory = () => {
   const [classrooms, setClassrooms] = useState([]);
@@ -40,17 +39,14 @@ const CheckinHistory = () => {
     sevenDaysAgo.getMonth() + 1
   }-${sevenDaysAgo.getDate()}`;
 
-  console.log(formattedCurrentDate, formattedSevenDaysAgo);
-
   let classroomId = useParams().classroomId;
 
   useEffect(() => {
     if (classroomId) {
       setFromDate(searchParams.get('from') ?? formattedSevenDaysAgo);
       setToDate(searchParams.get('to') ?? formattedCurrentDate);
-      getCheckinHistory();
+      fromDate && toDate && getCheckinHistory();
     } else {
-      console.log('no classroom id');
       setCheckinHistory([]);
       setLoading(false);
     }
@@ -115,7 +111,7 @@ const CheckinHistory = () => {
         {loading ? (
           <CSpinner />
         ) : (
-          <CTable bordered>
+          <CTable responsive bordered>
             <CTableHead>
               <CTableRow>
                 <CTableHeaderCell scope="col">#</CTableHeaderCell>
@@ -123,25 +119,44 @@ const CheckinHistory = () => {
                 <CTableHeaderCell scope="col">Họ và lót</CTableHeaderCell>
                 <CTableHeaderCell scope="col">Tên</CTableHeaderCell>
                 {checkinHistory?.dates?.map((date) => {
-                  const viewDate = new Date(date);
+                  const viewDate = new Date(date.date);
                   return (
                     <CTableHeaderCell scope="col" key={date}>
-                      {`${viewDate.getDate()}/${viewDate.getMonth() + 1}`}
+                      {`${viewDate.getDate()}/${viewDate.getMonth() + 1} ${
+                        date.time == 0 ? 'Sáng' : 'Chiều'
+                      }`}
                     </CTableHeaderCell>
                   );
                 })}
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {checkinHistory?.checkedInList?.map((checkin, index) => (
+              {checkinHistory?.checkedInList?.map((student, index) => (
                 <CTableRow key={index}>
                   <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                  <CTableDataCell>{checkin.code}</CTableDataCell>
-                  <CTableDataCell>{checkin.famMidName}</CTableDataCell>
-                  <CTableDataCell>{checkin.name}</CTableDataCell>
-                  {checkin?.checkedIn?.map((item, index) => (
-                    <CTableDataCell key={index}>{item.isChecked ? 'v' : ''}</CTableDataCell>
-                  ))}
+                  <CTableDataCell>{student.code}</CTableDataCell>
+                  <CTableDataCell>{student.famMidName}</CTableDataCell>
+                  <CTableDataCell>{student.name}</CTableDataCell>
+                  {student?.checkedIn?.map((item, index) => {
+                    let isChecked = '';
+                    if (item.checked) {
+                      let checkinTime = new Date(item.checked.created_at);
+                      let type;
+                      if (item.checked.type == 1) {
+                        type = 'Đầu';
+                      } else if (item.checked.type == 2) {
+                        type = 'Giữa';
+                      } else {
+                        type = 'Cuối';
+                      }
+                      isChecked = `${type} - ${checkinTime.getHours()}:${checkinTime.getMinutes()}:${checkinTime.getSeconds()}`;
+                    }
+                    return (
+                      <CTableDataCell key={index} style={{ minWidth: '100px' }}>
+                        {isChecked}
+                      </CTableDataCell>
+                    );
+                  })}
                 </CTableRow>
               ))}
             </CTableBody>

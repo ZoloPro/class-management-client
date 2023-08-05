@@ -8,6 +8,7 @@ const Document = React.lazy(() => import('./views/lecturer/document/Document'));
 const Checkin = React.lazy(() => import('./views/lecturer/checkin/Checkin'));
 const CheckinHistory = React.lazy(() => import('./views/lecturer/checkin/CheckinHistory'));
 const Password = React.lazy(() => import('./views/lecturer/password/Password'));
+const GradeReport = React.lazy(() => import('./views/lecturer/report/gradeReport/GradeReport'));
 
 const Lecturer = React.lazy(() => import('./views/management/lecturer/Lecturer'));
 const Student = React.lazy(() => import('./views/management/student/Student'));
@@ -100,6 +101,15 @@ const routes = [
     element: (
       <ProtectedRoute role={'lecturer'}>
         <Password />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/grade-report',
+    name: 'Grade report',
+    element: (
+      <ProtectedRoute role={'lecturer'}>
+        <GradeReport />
       </ProtectedRoute>
     ),
   },

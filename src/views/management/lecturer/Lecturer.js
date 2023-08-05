@@ -37,8 +37,6 @@ const Lecturer = () => {
   const [importFormVisible, setImportFormVisible] = useState(false);
   const [selectedLecturer, setSelectedLecturer] = useState(null);
 
-  const updateFrom = useRef();
-  const addFrom = useRef();
   const importForm = useRef();
 
   useEffect(() => {

@@ -105,6 +105,25 @@ const Grade = () => {
       });
   };
 
+  const handleEXport = () => {
+    const exportToast = toast.loading('Đang xuất báo cáo');
+    axiosClient
+      .get(`lecturer/grades/${classroomId}/report`, { responseType: 'blob' })
+      .then((response) => {
+        toast.dismiss(exportToast);
+        window.open(URL.createObjectURL(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.update(exportToast, {
+          render: error?.response?.data?.message || 'Đã xảy ra lỗi',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
+  };
+
   const handleSave = () => {
     const saveToast = toast.loading('Đang lưu');
     console.log(grades);
@@ -166,6 +185,7 @@ const Grade = () => {
             <CButton color="success" onClick={handleSave}>
               Lưu
             </CButton>
+            <CButton onClick={handleEXport}>Xuất file tổng kết</CButton>
           </CCol>
         )}
       </CRow>
@@ -317,5 +337,4 @@ const Grade = () => {
     </CCard>
   );
 };
-
 export default Grade;

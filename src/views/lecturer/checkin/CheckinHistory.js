@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axiosClient from '../../../axios/axios-client';
 import { useParams, useSearchParams } from 'react-router-dom';
 import {
@@ -17,34 +17,43 @@ import {
   CCol,
   CButton,
   CRow,
+  CForm,
+  CInputGroup,
+  CInputGroupText,
+  CFormInput,
 } from '@coreui/react';
+import { Field, Form, Formik } from 'formik';
 
 const CheckinHistory = () => {
   const [classrooms, setClassrooms] = useState([]);
   const [checkinHistory, setCheckinHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [classroom, setClassroom] = useState(null);
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [fromDate, setFromDate] = useState(searchParams.get('from'));
+  const [toDate, setToDate] = useState(searchParams.get('to'));
   const [classroomLoading, setClassroomLoading] = useState(true);
-
-  const currentDate = new Date();
-  const formattedCurrentDate = `${currentDate.getFullYear()}-${
-    currentDate.getMonth() + 1
-  }-${currentDate.getDate()}`;
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(currentDate.getDate() - 7);
-  const formattedSevenDaysAgo = `${sevenDaysAgo.getFullYear()}-${
-    sevenDaysAgo.getMonth() + 1
-  }-${sevenDaysAgo.getDate()}`;
 
   let classroomId = useParams().classroomId;
 
   useEffect(() => {
     if (classroomId) {
-      setFromDate(searchParams.get('from') ?? formattedSevenDaysAgo);
-      setToDate(searchParams.get('to') ?? formattedCurrentDate);
+      // Lấy giá trị "to" từ query string, nếu không có thì gán là ngày hiện tại
+      const to = searchParams.get('to') ? new Date(searchParams.get('to')) : new Date();
+      const toStr = to.toISOString().split('T')[0];
+      setToDate(toStr);
+
+      // Lấy giá trị "from" từ query string, nếu không có thì gán là 7 ngày trước "to"
+      const from = searchParams.get('from')
+        ? new Date(searchParams.get('from'))
+        : new Date(to.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const fromStr = from.toISOString().split('T')[0];
+      setFromDate(fromStr);
+    }
+  }, [classroomId]);
+
+  useEffect(() => {
+    if (classroomId) {
       fromDate && toDate && getCheckinHistory();
     } else {
       setCheckinHistory([]);
@@ -81,6 +90,13 @@ const CheckinHistory = () => {
       });
   };
 
+  const handleFilter = (values) => {
+    const { from, to } = values;
+    setFromDate(from);
+    setToDate(to);
+    setSearchParams({ from, to });
+  };
+
   return (
     <CCard>
       <CRow className="p-2">
@@ -103,7 +119,33 @@ const CheckinHistory = () => {
         </CCol>
         {classroomId && (
           <CCol className="d-flex justify-content-end gap-4">
-            <CButton color="success">Lọc</CButton>
+            <Formik
+              initialValues={{
+                from: fromDate,
+                to: toDate,
+              }}
+              onSubmit={handleFilter}
+            >
+              {() => (
+                <Form as={CForm} className="row row-cols-lg-auto g-3 align-items-center">
+                  <CCol xs={12}>
+                    <CInputGroup>
+                      <CInputGroupText>Từ</CInputGroupText>
+                      <Field as={CFormInput} type="date" name="from" />
+                    </CInputGroup>
+                  </CCol>
+                  <CCol xs={12}>
+                    <CInputGroup>
+                      <CInputGroupText>Đến</CInputGroupText>
+                      <Field as={CFormInput} type="date" name="to" />
+                    </CInputGroup>
+                  </CCol>
+                  <CCol xs={12}>
+                    <CButton type="submit">Lọc</CButton>
+                  </CCol>
+                </Form>
+              )}
+            </Formik>
           </CCol>
         )}
       </CRow>

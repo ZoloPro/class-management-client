@@ -38,16 +38,6 @@ const adminNav = [
     name: 'Tài liệu',
     to: '/document',
   },
-  {
-    component: CNavItem,
-    name: 'Báo cáo điểm',
-    to: '/mark/report',
-  },
-  {
-    component: CNavItem,
-    name: 'Báo cáo tổng hợp',
-    to: 'report',
-  },
 ];
 
 export default adminNav;

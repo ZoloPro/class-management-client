@@ -5,16 +5,6 @@ import { CNavItem, CNavTitle } from '@coreui/react';
 
 const adminNav = [
   {
-    component: CNavItem,
-    name: 'Dashboard',
-    to: '/dashboard',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
-  },
-  {
     component: CNavTitle,
     name: 'Quản lý lớp học',
   },

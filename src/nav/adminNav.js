@@ -1,12 +1,14 @@
-import React from 'react';
-import CIcon from '@coreui/icons-react';
-import { cilSpeedometer } from '@coreui/icons';
 import { CNavItem, CNavTitle } from '@coreui/react';
 
 const adminNav = [
   {
     component: CNavTitle,
     name: 'Quản lý lớp học',
+  },
+  {
+    component: CNavItem,
+    name: 'Quản lý khoa',
+    to: '/admin/department',
   },
   {
     component: CNavItem,

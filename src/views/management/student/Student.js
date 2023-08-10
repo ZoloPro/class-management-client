@@ -4,34 +4,38 @@ import CIcon from '@coreui/icons-react';
 import axiosClient from '../../../axios/axios-client';
 import { toast } from 'react-toastify';
 import { ReactComponent as ExcelIcon } from '../../../assets/images/icon-excel.svg';
-import { Formik, Field, Form } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import {
+  CButton,
+  CCard,
+  CCol,
+  CForm,
+  CFormCheck,
+  CFormInput,
+  CFormLabel,
+  CFormSelect,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+  CRow,
+  CSpinner,
   CTable,
   CTableBody,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-  CCard,
-  CButton,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CModalFooter,
-  CFormCheck,
-  CRow,
-  CCol,
-  CFormLabel,
-  CForm,
-  CFormInput,
-  CSpinner,
 } from '@coreui/react';
+import { useParams } from 'react-router-dom';
 
 const Student = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [departmentsLoading, setDepartmentsLoading] = useState(true);
+  const [departments, setDepartments] = useState([]);
 
   const [addFormVisible, setAddFormVisible] = useState(false);
   const [importFormVisible, setImportFormVisible] = useState(false);
@@ -44,17 +48,33 @@ const Student = () => {
     name: Yup.string().required('Vui lòng nhập tên'),
     gender: Yup.string().required('Vui lòng chọn giới tính'),
     birthdate: Yup.date().required('Vui lòng nhập ngày sinh'),
-    phone: Yup.string()
-      .required('Vui lòng nhập số điện thoại')
-      .min(8, 'Số điện thoại không hợp lệ')
-      .max(11, 'Số điện thoại không hợp lệ'),
-    email: Yup.string().email('Email không hợp lệ').required('Vui lòng nhập email'),
+    phone: Yup.string().min(8, 'Số điện thoại không hợp lệ').max(11, 'Số điện thoại không hợp lệ'),
+    email: Yup.string().email('Email không hợp lệ'),
+    departmentId: Yup.string().required('Vui lòng chọn khoa'),
     enrollmentDate: Yup.date().required('Vui lòng nhập ngày nhập học'),
   });
+
+  const departmentId = useParams().departmentId;
 
   useEffect(() => {
     getStudents();
   }, []);
+
+  useEffect(() => {
+    getDepartments();
+  }, []);
+
+  const getDepartments = () => {
+    axiosClient
+      .get('/admin/departments')
+      .then((response) => {
+        console.log(response);
+        setDepartments(response?.data?.data?.departments);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const getStudents = () => {
     axiosClient
@@ -98,9 +118,8 @@ const Student = () => {
 
   const handleSubmitUpdate = (values, studentId) => {
     const toastUpdate = toast.loading('Đang cập nhật');
-    const student = values;
     axiosClient
-      .put(`admin/students/${studentId}`, student)
+      .put(`admin/students/${studentId}`, values)
       .then((response) => {
         console.log(response);
         getStudents();
@@ -225,18 +244,52 @@ const Student = () => {
       });
   };
 
+  const handleFilter = (e) => {
+    setLoading(true);
+    const departmentId = e.target.value;
+    axiosClient
+      .get('admin/students', {
+        params: {
+          department: departmentId,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        setStudents(response?.data?.data?.students);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div>
       <CCard>
-        <div className={'m-2 d-flex gap-4 justify-content-end'}>
-          <CButton color="success" onClick={() => setAddFormVisible(!addFormVisible)}>
-            <CIcon icon={cilPlus} /> Thêm
-          </CButton>
-          <CButton color="success" onClick={() => setImportFormVisible(!importFormVisible)}>
-            <CIcon icon={cilDataTransferUp} />
-            Nhập từ file
-          </CButton>
-        </div>
+        <CRow className="p-2">
+          <CCol className="d-flex gap-3 align-items-center">
+            <CFormSelect
+              aria-label="Chọn khoa"
+              options={[
+                { label: 'Tất cả', value: '' },
+                ...departments.map((department) => ({
+                  label: department.departmentName,
+                  value: department.id,
+                })),
+              ]}
+              onChange={handleFilter}
+            />
+          </CCol>
+          <CCol className="text-end ">
+            <CButton color="success" onClick={() => setAddFormVisible(!addFormVisible)}>
+              <CIcon icon={cilPlus} /> Thêm
+            </CButton>
+            <CButton color="success" onClick={() => setImportFormVisible(!importFormVisible)}>
+              <CIcon icon={cilDataTransferUp} />
+              Nhập từ file
+            </CButton>
+          </CCol>
+        </CRow>
         <div className={'m-2'}>
           {loading ? (
             <CSpinner />
@@ -305,6 +358,7 @@ const Student = () => {
             birthdate: '',
             phone: '',
             email: '',
+            departmentId: '',
             enrollmentDate: '',
           }}
           validationSchema={validationSchema}
@@ -417,6 +471,27 @@ const Student = () => {
                 </CRow>
                 <CRow className="mb-3">
                   <CFormLabel htmlFor="inputEmail" className="col-sm-3 col-form-label">
+                    Khoa
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormSelect}
+                      aria-label="Chọn khoa"
+                      name="departmentId"
+                      invalid={!!(touched.departmentId && errors.departmentId)}
+                      feedback={errors.departmentId || ''}
+                      options={[
+                        { label: 'Chọn khoa' },
+                        ...departments.map((department) => ({
+                          label: department.departmentName,
+                          value: department.id,
+                        })),
+                      ]}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="inputEmail" className="col-sm-3 col-form-label">
                     Ngày nhập học
                   </CFormLabel>
                   <CCol sm={9}>
@@ -436,7 +511,7 @@ const Student = () => {
                   Đóng
                 </CButton>
                 <CButton color="primary" type="submit">
-                  Cập nhật
+                  Thêm
                 </CButton>
               </CModalFooter>
             </Form>
@@ -485,6 +560,7 @@ const Student = () => {
               birthdate: selectedStudent.birthdate,
               phone: selectedStudent.phone,
               email: selectedStudent.email,
+              department: selectedStudent.department,
               enrollmentDate: selectedStudent.enrollmentDate,
             }}
             validationSchema={validationSchema}

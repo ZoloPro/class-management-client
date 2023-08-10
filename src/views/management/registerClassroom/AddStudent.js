@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import CIcon from '@coreui/icons-react';
 import axiosClient from '../../../axios/axios-client';
 import { toast } from 'react-toastify';
 import {
@@ -15,6 +14,7 @@ import {
   CSpinner,
   CRow,
   CCol,
+  CFormSelect,
 } from '@coreui/react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -22,7 +22,9 @@ const Student = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [checked, setChecked] = useState([]);
+  const [studentsOfClass, setStudentsOfClass] = useState([]);
   const [classroom, setClassroom] = useState(null);
+  const [departments, setDepartments] = useState([]);
 
   const lastChecked = useRef(null);
   const tableRowRef = useRef([]);
@@ -34,7 +36,20 @@ const Student = () => {
   useEffect(() => {
     getStudents();
     getStudentsOfClass();
+    getDepartments();
   }, []);
+
+  const getDepartments = () => {
+    axiosClient
+      .get(`/admin/departments`)
+      .then((response) => {
+        console.log(response);
+        setDepartments(response?.data?.data?.departments);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const getStudentsOfClass = () => {
     axiosClient
@@ -43,7 +58,7 @@ const Student = () => {
         console.log(response);
         setClassroom(response?.data?.data?.classroom);
         const students = response?.data?.data?.classroom.students;
-        setChecked(students.map((student) => student.id.toString()));
+        setStudentsOfClass(students.map((student) => student.id.toString()));
         setLoading(false);
       })
       .catch((error) => {
@@ -88,6 +103,25 @@ const Student = () => {
       });
   };
 
+  const handleFilter = (e) => {
+    setLoading(true);
+    const departmentId = e.target.value;
+    axiosClient
+      .get('admin/students', {
+        params: {
+          department: departmentId,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        setStudents(response?.data?.data?.students);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const onCheck = (e) => {
     const index = e.target.id;
     const isChecked = e.target.checked;
@@ -126,6 +160,17 @@ const Student = () => {
       <CCard>
         <CRow className={'m-2'}>
           <CCol>
+            <CFormSelect
+              aria-label="Chọn khoa"
+              options={[
+                { label: 'Tất cả', value: '' },
+                ...departments.map((department) => ({
+                  label: department.departmentName,
+                  value: department.id,
+                })),
+              ]}
+              onChange={handleFilter}
+            />
             <span>{`${classroom?.term?.termName ?? ''} (mã lớp ${classroomId})`}</span>
           </CCol>
           <CCol className="text-end">
@@ -167,7 +212,7 @@ const Student = () => {
                     <CTableHeaderCell>
                       <CFormCheck
                         id={index.toString()}
-                        checked={checked.includes(student.id.toString())}
+                        checked={studentsOfClass.includes(student.id.toString())}
                         onChange={(e) => onCheck(e, student)}
                         ref={(el) => (tableRowRef.current[index] = el)}
                         value={student.id}

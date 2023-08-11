@@ -267,7 +267,7 @@ const Student = () => {
     <div>
       <CCard>
         <CRow className="p-2">
-          <CCol className="d-flex gap-3 align-items-center">
+          <CCol sm={3}>
             <CFormSelect
               aria-label="Chọn khoa"
               options={[
@@ -280,7 +280,7 @@ const Student = () => {
               onChange={handleFilter}
             />
           </CCol>
-          <CCol className="text-end ">
+          <CCol className="d-flex justify-content-end gap-2">
             <CButton color="success" onClick={() => setAddFormVisible(!addFormVisible)}>
               <CIcon icon={cilPlus} /> Thêm
             </CButton>

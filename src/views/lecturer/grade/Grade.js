@@ -105,7 +105,7 @@ const Grade = () => {
       });
   };
 
-  const handleEXport = () => {
+  const handleExport = () => {
     const exportToast = toast.loading('Đang xuất báo cáo');
     axiosClient
       .get(`lecturer/grades/${classroomId}/report`, { responseType: 'blob' })
@@ -121,6 +121,21 @@ const Grade = () => {
           isLoading: false,
           autoClose: 3000,
         });
+      });
+  };
+
+  const sendNotify = () => {
+    axiosClient
+      .post(`lecturer/send-notification/${classroomId}`, {
+        // title: classroom?.term?.termName,
+        body: 'Đã có điểm thi, vui lòng xem ngay',
+        type: 2,
+      })
+      .then((response) => {
+        toast.success('Đã gửi thông báo đến toàn bộ lớp học');
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
@@ -142,6 +157,7 @@ const Grade = () => {
           autoClose: 3000,
         });
         getGrades();
+        sendNotify();
       })
       .catch((error) => {
         console.log(error);
@@ -185,7 +201,7 @@ const Grade = () => {
             <CButton color="success" onClick={handleSave}>
               Lưu
             </CButton>
-            <CButton onClick={handleEXport}>Xuất file tổng kết</CButton>
+            <CButton onClick={handleExport}>Xuất file tổng kết</CButton>
           </CCol>
         )}
       </CRow>

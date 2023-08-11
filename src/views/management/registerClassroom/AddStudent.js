@@ -129,7 +129,6 @@ const Student = () => {
       const start = Math.min(lastChecked.current, index);
       const end = Math.max(lastChecked.current, index);
       setChecked((prev) => {
-        debugger;
         let newChecked = [...prev];
         for (let i = start; i <= end; i++) {
           const studentIdRef = tableRowRef.current[i].value;
@@ -160,18 +159,24 @@ const Student = () => {
       <CCard>
         <CRow className={'m-2'}>
           <CCol>
-            <CFormSelect
-              aria-label="Chọn khoa"
-              options={[
-                { label: 'Tất cả', value: '' },
-                ...departments.map((department) => ({
-                  label: department.departmentName,
-                  value: department.id,
-                })),
-              ]}
-              onChange={handleFilter}
-            />
-            <span>{`${classroom?.term?.termName ?? ''} (mã lớp ${classroomId})`}</span>
+            <CRow>
+              <CCol>
+                <CFormSelect
+                  aria-label="Chọn khoa"
+                  options={[
+                    { label: 'Tất cả', value: '' },
+                    ...departments.map((department) => ({
+                      label: department.departmentName,
+                      value: department.id,
+                    })),
+                  ]}
+                  onChange={handleFilter}
+                />
+              </CCol>
+              <CCol>
+                <span>{`${classroom?.term?.termName ?? ''} (mã lớp ${classroomId})`}</span>
+              </CCol>
+            </CRow>
           </CCol>
           <CCol className="text-end">
             <CButton color="success" onClick={handleSave}>
@@ -212,7 +217,11 @@ const Student = () => {
                     <CTableHeaderCell>
                       <CFormCheck
                         id={index.toString()}
-                        checked={studentsOfClass.includes(student.id.toString())}
+                        checked={
+                          studentsOfClass.includes(student.id.toString()) ||
+                          checked.includes(student.id.toString())
+                        }
+                        disabled={studentsOfClass.includes(student.id.toString())}
                         onChange={(e) => onCheck(e, student)}
                         ref={(el) => (tableRowRef.current[index] = el)}
                         value={student.id}

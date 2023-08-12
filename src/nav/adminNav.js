@@ -35,6 +35,11 @@ const adminNav = [
     name: 'Quản lý đăng kí lớp học',
     to: '/admin/register-classroom/1',
   },
+  {
+    component: CNavItem,
+    name: 'Thông báo',
+    to: '/admin/text-editor',
+  },
 ];
 
 export default adminNav;

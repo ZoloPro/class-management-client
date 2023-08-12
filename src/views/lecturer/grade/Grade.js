@@ -127,7 +127,7 @@ const Grade = () => {
   const sendNotify = () => {
     axiosClient
       .post(`lecturer/send-notification/${classroomId}`, {
-        // title: classroom?.term?.termName,
+        title: classroom?.term?.termName,
         body: 'Đã có điểm thi, vui lòng xem ngay',
         type: 2,
       })

@@ -54,6 +54,11 @@ const Student = () => {
     enrollmentDate: Yup.date().required('Vui lòng nhập ngày nhập học'),
   });
 
+  const importValidationSchema = Yup.object().shape({
+    departmentId: Yup.string().required('Vui lòng chọn khoa'),
+    file: Yup.mixed().required('Vui lòng chọn file'),
+  });
+
   const departmentId = useParams().departmentId;
 
   useEffect(() => {
@@ -170,12 +175,12 @@ const Student = () => {
       });
   };
 
-  const handleSubmitImport = (e) => {
-    e.preventDefault();
+  const handleSubmitImport = (values) => {
     const toastImport = toast.loading('Đang nhập file');
-    const file = importForm.current.file.files[0];
     const formData = new FormData();
+    const file = importForm.current.file.files[0];
     formData.append('file', file);
+    formData.append('departmentId', values.departmentId);
     console.log(formData);
     axiosClient
       .post('/admin/import/students', formData, {
@@ -522,30 +527,77 @@ const Student = () => {
         <CModalHeader>
           <CModalTitle>Thêm sinh viên</CModalTitle>
         </CModalHeader>
-        <CForm ref={importForm} onSubmit={handleSubmitImport} method="POST ">
-          <CModalBody>
-            <CRow className="mb-3">
-              <CFormLabel htmlFor="inputFile" className="col-sm-3 col-form-label">
-                Chọn file
-              </CFormLabel>
-              <CCol sm={9}>
-                <CFormInput type="file" id="inputFile" name="file" />
-              </CCol>
-            </CRow>
-          </CModalBody>
-          <CModalFooter>
-            <a onClick={handleDownload} className="fs-6 flex-grow-1" style={{ cursor: 'pointer' }}>
-              <ExcelIcon style={{ height: '32px' }} />
-              File mẫu
-            </a>
-            <CButton color="secondary" onClick={() => setImportFormVisible(false)}>
-              Đóng
-            </CButton>
-            <CButton color="primary" type="submit">
-              Nhập
-            </CButton>
-          </CModalFooter>
-        </CForm>
+        <Formik
+          initialValues={{
+            departmentId: '',
+            file: null,
+          }}
+          validationSchema={importValidationSchema}
+          onSubmit={handleSubmitImport}
+        >
+          {({ errors, touched }) => (
+            <Form as={CForm} ref={importForm}>
+              <CModalBody>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="inputEmail" className="col-sm-3 col-form-label">
+                    Khoa
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormSelect}
+                      aria-label="Chọn khoa"
+                      name="departmentId"
+                      invalid={!!(touched.departmentId && errors.departmentId)}
+                      feedback={errors.departmentId || ''}
+                      options={[
+                        { label: 'Chọn khoa' },
+                        ...departments.map((department) => ({
+                          label: department.departmentName,
+                          value: department.id,
+                        })),
+                      ]}
+                    />
+                  </CCol>
+                </CRow>
+                <CRow className="mb-3">
+                  <CFormLabel
+                    as={CFormInput}
+                    htmlFor="inputFile"
+                    className="col-sm-3 col-form-label"
+                  >
+                    Chọn file
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    <Field
+                      as={CFormInput}
+                      type="file"
+                      id="inputFile"
+                      name="file"
+                      invalid={!!(touched.file && errors.file)}
+                      feedback={errors.file || ''}
+                    />
+                  </CCol>
+                </CRow>
+              </CModalBody>
+              <CModalFooter>
+                <a
+                  onClick={handleDownload}
+                  className="fs-6 flex-grow-1"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <ExcelIcon style={{ height: '32px' }} />
+                  File mẫu
+                </a>
+                <CButton color="secondary" onClick={() => setImportFormVisible(false)}>
+                  Đóng
+                </CButton>
+                <CButton color="primary" type="submit">
+                  Nhập
+                </CButton>
+              </CModalFooter>
+            </Form>
+          )}
+        </Formik>
       </CModal>
       {selectedStudent && (
         <CModal backdrop={'static'} visible={true} onClose={() => setSelectedStudent(null)}>

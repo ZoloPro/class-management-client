@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { cilPencil, cilPlus, cilTrash } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import axiosClient from '../../../axios/axios-client';
@@ -35,9 +35,11 @@ const Classroom = () => {
   const [addFormVisible, setAddFormVisible] = useState(false);
   const [selectedClassroom, setSelectedClassroom] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [semesters, setSemesters] = useState([]);
 
   useEffect(() => {
     getClassrooms();
+    getSemesters();
     getLecturers();
     getTerms();
   }, []);
@@ -45,9 +47,25 @@ const Classroom = () => {
   const validationSchema = Yup.object().shape({
     term: Yup.string().required('Vui lòng chọn học phần'),
     lecturer: Yup.string().required('Vui lòng chọn giảng viên'),
-    startDate: Yup.string().required('Vui lòng chọn ngày bắt đầu'),
-    endDate: Yup.string().required('Vui lòng chọn ngày kết thúc'),
   });
+
+  const addValidationSchema = Yup.object().shape({
+    semesterId: Yup.string().required('Vui lòng chọn học kỳ'),
+    term: Yup.string().required('Vui lòng chọn học phần'),
+    lecturer: Yup.string().required('Vui lòng chọn giảng viên'),
+  });
+
+  const getSemesters = () => {
+    axiosClient
+      .get(`/admin/semesters`)
+      .then((response) => {
+        console.log(response);
+        setSemesters(response?.data?.data?.semesters);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const getClassrooms = () => {
     axiosClient
@@ -90,10 +108,9 @@ const Classroom = () => {
     const addToast = toast.loading('Đang thêm');
     axiosClient
       .post('admin/classrooms', {
+        semesterId: values.semesterId,
         termId: values.term,
         lecturerId: values.lecturer,
-        startDate: values.startDate,
-        endDate: values.endDate,
       })
       .then((response) => {
         console.log(response);
@@ -124,8 +141,6 @@ const Classroom = () => {
       .put(`admin/classrooms/${classroomId}`, {
         termId: values.term,
         lecturerId: values.lecturer,
-        startDate: values.startDate,
-        endDate: values.endDate,
       })
       .then((response) => {
         console.log(response);
@@ -181,14 +196,48 @@ const Classroom = () => {
       });
   };
 
+  const handleFilter = (e) => {
+    setLoading(true);
+    const semesterId = e.target.value;
+    axiosClient
+      .get('admin/classrooms', {
+        params: {
+          semester: semesterId,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        setClassrooms(response?.data?.data?.classrooms);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div>
       <CCard>
-        <div className={'m-2 d-flex gap-4 justify-content-end'}>
-          <CButton color="success" onClick={() => setAddFormVisible(!addFormVisible)}>
-            <CIcon icon={cilPlus} /> Thêm
-          </CButton>
-        </div>
+        <CRow className="p-2">
+          <CCol sm={3}>
+            <CFormSelect
+              aria-label="Chọn khoa"
+              options={[
+                { label: 'Tất cả', value: '' },
+                ...semesters.map((semester) => ({
+                  label: semester.semesterName,
+                  value: semester.id,
+                })),
+              ]}
+              onChange={handleFilter}
+            />
+          </CCol>
+          <CCol className="d-flex justify-content-end gap-2">
+            <CButton color="success" onClick={() => setAddFormVisible(!addFormVisible)}>
+              <CIcon icon={cilPlus} /> Thêm
+            </CButton>
+          </CCol>
+        </CRow>
         <div className={'m-2'}>
           {loading ? (
             <CSpinner />
@@ -200,13 +249,11 @@ const Classroom = () => {
                   <CTableHeaderCell scope="col">Mã lớp học</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Giảng viên</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Học phần</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Ngày bắt đầu</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Ngày kết thúc</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Thao tác</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
-                {classrooms.map((classroom, index) => (
+                {classrooms?.map((classroom, index) => (
                   <CTableRow key={classroom.id}>
                     <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
                     <CTableDataCell>{classroom.id}</CTableDataCell>
@@ -214,8 +261,6 @@ const Classroom = () => {
                       {`${classroom.lecturer.fullname} (${classroom.lecturer.code})`}
                     </CTableDataCell>
                     <CTableDataCell>{`${classroom.term.termName} (${classroom.term.id})`}</CTableDataCell>
-                    <CTableDataCell>{classroom.startDate}</CTableDataCell>
-                    <CTableDataCell>{classroom.endDate}</CTableDataCell>
                     <CTableDataCell>
                       <CButton color="primary" onClick={() => setSelectedClassroom(classroom)}>
                         <CIcon icon={cilPencil} />
@@ -237,17 +282,38 @@ const Classroom = () => {
         </CModalHeader>
         <Formik
           initialValues={{
+            semesterId: '',
             lecturer: '',
             term: '',
-            startDate: '',
-            endDate: '',
           }}
           onSubmit={handleSubmitAdd}
-          validationSchema={validationSchema}
+          validationSchema={addValidationSchema}
         >
           {({ errors, touched }) => (
             <Form as={CForm}>
               <CModalBody>
+                <CRow className="mb-3">
+                  <CFormLabel htmlFor="inputTerm" className="col-sm-3 col-form-label">
+                    Chọn học kì
+                  </CFormLabel>
+                  <CCol sm={9}>
+                    {
+                      <Field
+                        as={CFormSelect}
+                        name="semesterId"
+                        invalid={errors.semesterId && touched.semesterId}
+                        feedback={errors.semesterId}
+                        options={[
+                          'Chọn học kì',
+                          ...semesters.map((semester) => ({
+                            label: `${semester.semesterName} (${semester.id})`,
+                            value: semester.id,
+                          })),
+                        ]}
+                      />
+                    }
+                  </CCol>
+                </CRow>
                 <CRow className="mb-3">
                   <CFormLabel htmlFor="inputLecturer" className="col-sm-3 col-form-label">
                     Giảng viên
@@ -292,38 +358,6 @@ const Classroom = () => {
                     }
                   </CCol>
                 </CRow>
-                <CRow className="mb-3">
-                  <CFormLabel htmlFor="inputTerm" className="col-sm-3 col-form-label">
-                    Ngày bắt đầu
-                  </CFormLabel>
-                  <CCol sm={9}>
-                    {
-                      <Field
-                        as={CFormInput}
-                        type="date"
-                        name="startDate"
-                        invalid={errors.startDate && touched.startDate}
-                        feedback={errors.startDate}
-                      />
-                    }
-                  </CCol>
-                </CRow>
-                <CRow className="mb-3">
-                  <CFormLabel htmlFor="inputTerm" className="col-sm-3 col-form-label">
-                    Ngày kết thức
-                  </CFormLabel>
-                  <CCol sm={9}>
-                    {
-                      <Field
-                        as={CFormInput}
-                        type="date"
-                        name="endDate"
-                        invalid={errors.endDate && touched.endDate}
-                        feedback={errors.endDate}
-                      />
-                    }
-                  </CCol>
-                </CRow>
               </CModalBody>
               <CModalFooter>
                 <CButton color="secondary" onClick={() => setAddFormVisible(false)}>
@@ -347,9 +381,8 @@ const Classroom = () => {
               id: selectedClassroom.id,
               lecturer: selectedClassroom.lecturer.id,
               term: selectedClassroom.term.id,
-              startDate: selectedClassroom.startDate,
-              endDate: selectedClassroom.endDate,
             }}
+            validationSchema={validationSchema}
             onSubmit={handleSubmitUpdate}
           >
             {({ errors, touched }) => (
@@ -379,38 +412,6 @@ const Classroom = () => {
                   </CRow>
                   <CRow className="mb-3">
                     <CFormLabel htmlFor="inputTerm" className="col-sm-3 col-form-label">
-                      Ngày bắt đầu
-                    </CFormLabel>
-                    <CCol sm={9}>
-                      {
-                        <Field
-                          as={CFormInput}
-                          type="date"
-                          name="startDate"
-                          invalid={errors.startDate && touched.startDate}
-                          feedback={errors.startDate}
-                        />
-                      }
-                    </CCol>
-                  </CRow>
-                  <CRow className="mb-3">
-                    <CFormLabel htmlFor="inputTerm" className="col-sm-3 col-form-label">
-                      Ngày kết thức
-                    </CFormLabel>
-                    <CCol sm={9}>
-                      {
-                        <Field
-                          as={CFormInput}
-                          type="date"
-                          name="endDate"
-                          invalid={errors.endDate && touched.endDate}
-                          feedback={errors.endDate}
-                        />
-                      }
-                    </CCol>
-                  </CRow>
-                  <CRow className="mb-3">
-                    <CFormLabel htmlFor="inputTerm" className="col-sm-3 col-form-label">
                       Chọn học phần
                     </CFormLabel>
                     <CCol sm={9}>
@@ -427,38 +428,6 @@ const Classroom = () => {
                               value: term.id,
                             })),
                           ]}
-                        />
-                      }
-                    </CCol>
-                  </CRow>
-                  <CRow className="mb-3">
-                    <CFormLabel htmlFor="inputTerm" className="col-sm-3 col-form-label">
-                      Ngày bắt đầu
-                    </CFormLabel>
-                    <CCol sm={9}>
-                      {
-                        <Field
-                          as={CFormInput}
-                          type="date"
-                          name="startDate"
-                          invalid={errors.startDate && touched.startDate}
-                          feedback={errors.startDate}
-                        />
-                      }
-                    </CCol>
-                  </CRow>
-                  <CRow className="mb-3">
-                    <CFormLabel htmlFor="inputTerm" className="col-sm-3 col-form-label">
-                      Ngày kết thức
-                    </CFormLabel>
-                    <CCol sm={9}>
-                      {
-                        <Field
-                          as={CFormInput}
-                          type="date"
-                          name="endDate"
-                          invalid={errors.endDate && touched.endDate}
-                          feedback={errors.endDate}
                         />
                       }
                     </CCol>

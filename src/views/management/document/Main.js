@@ -35,6 +35,7 @@ export default function Main() {
           isLoading: false,
           autoClose: 2000,
         });
+        window.location.reload();
       })
       .catch((err) => {
         console.log(err);

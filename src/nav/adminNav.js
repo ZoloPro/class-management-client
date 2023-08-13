@@ -12,6 +12,11 @@ const adminNav = [
   },
   {
     component: CNavItem,
+    name: 'Quản lý học kì',
+    to: '/admin/semester',
+  },
+  {
+    component: CNavItem,
     name: 'Quản lý giảng viên',
     to: '/admin/lecturer',
   },

@@ -50,6 +50,37 @@ const RegisterClassroom = () => {
     getClassrooms();
   }, [classroomId]);
 
+  const handleDelete = (student) => {
+    console.log(`admin/classrooms/${classroomId}/student/${student.id}`);
+    if (
+      !window.confirm(`Xác nhận xóa sinh viên ${student.name} (${student.code}) khỏi lớp học ?`)
+    ) {
+      return;
+    }
+    const toastDelete = toast.loading('Đang xóa');
+    axiosClient
+      .delete(`admin/classrooms/${classroomId}/student/${student.id}`)
+      .then((response) => {
+        console.log(response);
+        getStudentList();
+        toast.update(toastDelete, {
+          render: 'Xóa thành công',
+          type: 'success',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.update(toastDelete, {
+          render: error.response.data.message || 'Đã xảy ra lỗi',
+          type: 'error',
+          isLoading: false,
+          autoClose: 3000,
+        });
+      });
+  };
+
   const getClassrooms = () => {
     setLoading(true);
     axiosClient
@@ -160,7 +191,7 @@ const RegisterClassroom = () => {
                       {student.status}
                     </CTableDataCell>
                     <CTableDataCell>
-                      <CButton color="danger">
+                      <CButton color="danger" onClick={() => handleDelete(student)}>
                         <CIcon icon={cilTrash} />
                       </CButton>
                     </CTableDataCell>

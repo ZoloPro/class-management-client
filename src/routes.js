@@ -22,6 +22,10 @@ const WifiInfo = React.lazy(() => import('./views/management/wifiInfo/WifiInfo')
 const Department = React.lazy(() => import('./views/management/department/Department'));
 const Main = React.lazy(() => import('./views/management/document/Main'));
 const Semester = React.lazy(() => import('./views/management/semester/Semester'));
+const NotificationHistory = React.lazy(() =>
+  import('./views/management/document/NotificationHistory'),
+);
+const NotificationDetail = React.lazy(() => import('./views/management/document/Detail'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -229,6 +233,24 @@ const routes = [
     element: (
       <ProtectedRoute role={'admin'}>
         <Semester />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/notification-history',
+    name: 'Notification history',
+    element: (
+      <ProtectedRoute role={'admin'}>
+        <NotificationHistory />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/admin/notification-history/:notificationId',
+    name: 'Notification Detail',
+    element: (
+      <ProtectedRoute role={'admin'}>
+        <NotificationDetail />
       </ProtectedRoute>
     ),
   },

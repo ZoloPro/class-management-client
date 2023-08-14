@@ -45,6 +45,11 @@ const adminNav = [
     name: 'Thông báo',
     to: '/admin/text-editor',
   },
+  {
+    component: CNavItem,
+    name: 'Lịch sử thông báo',
+    to: '/admin/notification-history',
+  },
 ];
 
 export default adminNav;
